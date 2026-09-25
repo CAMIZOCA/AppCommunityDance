@@ -1,6 +1,7 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
 import { Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
+import { colors } from '@/theme/tokens';
 
 interface ProgressCard {
   id: string;
@@ -80,13 +81,13 @@ export default function ProgressScreen() {
               onPress={() => {}}
             >
               <View className="w-11 h-14 rounded-md bg-neutral-900 flex-shrink-0 items-center justify-center">
-                <Icon name="play" size={16} color="#9184d9" />
+                <Icon name="play" size={16} color={colors.accent.DEFAULT} />
               </View>
               <View className="flex-1">
                 <Text className="text-sm font-medium text-text">Paso Doble</Text>
                 <Text className="text-2xs text-neutral-500">Salsa • Intermedio</Text>
               </View>
-              <Icon name="chevronRight" size={16} color="#75798c" />
+              <Icon name="chevronRight" size={16} color={colors.neutral[600]} />
             </Pressable>
           </View>
         }

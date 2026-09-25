@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, FlatList, Pressable, ScrollView } from 'react-native';
 import { Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
+import { colors } from '@/theme/tokens';
 
 interface DanceStep {
   id: string;
@@ -120,14 +121,14 @@ export default function GalleryScreen() {
             {/* Video Thumbnail */}
             <View className="aspect-[4/5] rounded-2xl bg-surface items-center justify-center mb-2 overflow-hidden">
               <View className="w-11 h-11 rounded-full border border-accent items-center justify-center">
-                <Icon name="play" size={16} color="#9184d9" />
+                <Icon name="play" size={16} color={colors.accent.DEFAULT} />
               </View>
               <Text className="absolute bottom-2 left-2 text-2xs text-neutral-400 font-medium">
                 {item.duration}
               </Text>
               {item.learned ? (
                 <View className="absolute top-2 left-2 px-2 py-1 rounded-full bg-accentScale-800 flex-row items-center gap-1">
-                  <Icon name="check" size={10} color="#f5f4ff" />
+                  <Icon name="check" size={10} color={colors.accentScale[100]} />
                   <Text className="text-2xs text-accentScale-100">Aprendido</Text>
                 </View>
               ) : null}

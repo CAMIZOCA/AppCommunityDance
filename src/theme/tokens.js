@@ -8,6 +8,7 @@ module.exports = {
     text: { DEFAULT: '#e9e9ed', dark: '#e9e9ed' },
     accent: { DEFAULT: '#9184d9', foreground: '#FFFFFF' },
     primary: { DEFAULT: '#9184d9', foreground: '#FFFFFF' },
+    danger: { DEFAULT: '#ef4444', foreground: '#FFFFFF' },
     divider: { DEFAULT: 'rgba(233, 233, 237, 0.16)', dark: 'rgba(233, 233, 237, 0.16)' },
 
     // Neutral scale (100-900)

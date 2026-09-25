@@ -1,5 +1,6 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { Avatar, Icon, IconName, Screen } from '@/components';
+import { colors } from '@/theme/tokens';
 
 type SettingsRow = {
   icon: IconName;
@@ -54,11 +55,11 @@ function SettingsGroup({ section }: { section: SettingsSection }) {
             }`}
             onPress={() => {}}>
             <View className={`w-7 h-7 rounded-[8px] items-center justify-center ${row.iconBg}`}>
-              <Icon name={row.icon} size={15} color="#FFFFFF" />
+              <Icon name={row.icon} size={15} color={colors.primary.foreground} />
             </View>
             <Text className="flex-1 text-sm font-medium text-text">{row.label}</Text>
             {row.value ? <Text className="text-sm text-neutral-500">{row.value}</Text> : null}
-            <Icon name="chevronRight" size={14} color="#595d6c" />
+            <Icon name="chevronRight" size={14} color={colors.neutral[700]} />
           </Pressable>
         ))}
       </View>
@@ -84,7 +85,7 @@ export default function SettingsScreen() {
               <Text className="text-lg font-semibold text-text">Tu Perfil</Text>
               <Text className="text-xs text-neutral-500">Ver y editar tu perfil</Text>
             </View>
-            <Icon name="chevronRight" size={14} color="#595d6c" />
+            <Icon name="chevronRight" size={14} color={colors.neutral[700]} />
           </Pressable>
         </View>
 
@@ -97,8 +98,8 @@ export default function SettingsScreen() {
           <Pressable
             className="flex-row items-center justify-center gap-2 rounded-card bg-surface px-4 py-3.5 active:bg-black/10"
             onPress={() => {}}>
-            <Icon name="logout" size={16} color="#ef4444" />
-            <Text className="text-sm font-semibold text-red-500">Cerrar sesión</Text>
+            <Icon name="logout" size={16} color={colors.danger.DEFAULT} />
+            <Text className="text-sm font-semibold text-danger">Cerrar sesión</Text>
           </Pressable>
         </View>
 

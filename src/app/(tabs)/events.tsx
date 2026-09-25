@@ -1,6 +1,7 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
 import { Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
+import { colors } from '@/theme/tokens';
 
 interface Event {
   id: string;
@@ -61,7 +62,7 @@ export default function EventsScreen() {
           <Pressable onPress={() => {}} className="active:opacity-90">
             {/* Event Card */}
             <View className="rounded-card overflow-hidden relative h-44 bg-surface items-center justify-center">
-              <Icon name="photo" size={32} color="#3f424d" />
+              <Icon name="photo" size={32} color={colors.neutral[800]} />
 
               {/* Date Badge */}
               <View className="absolute top-3 left-3 w-14 h-16 rounded-md bg-background/80 items-center justify-center z-10">
@@ -81,7 +82,7 @@ export default function EventsScreen() {
             <View className="gap-1 mt-2.5">
               <Text className="text-4.25 font-semibold text-text">{item.name}</Text>
               <View className="flex-row items-center gap-1">
-                <Icon name="pin" size={12} color="#9397ab" />
+                <Icon name="pin" size={12} color={colors.neutral[500]} />
                 <Text className="text-3 text-neutral-400">{item.date}</Text>
               </View>
               <Text className="text-2.75 text-neutral-500">{item.description}</Text>

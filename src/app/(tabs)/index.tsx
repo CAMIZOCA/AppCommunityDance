@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, FlatList, Pressable, TextInput } from 'react-native';
 import { Avatar, Badge, Fab, Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
+import { colors } from '@/theme/tokens';
 
 interface Group {
   id: string;
@@ -72,12 +73,12 @@ export default function HomeScreen() {
       {/* Search */}
       <View className="px-5 pb-3">
         <View className="h-11 rounded-full bg-surface flex-row items-center gap-2 px-4">
-          <Icon name="search" size={16} color="#9397ab" />
+          <Icon name="search" size={16} color={colors.neutral[500]} />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar grupo..."
-            placeholderTextColor="#9397ab"
+            placeholderTextColor={colors.neutral[500]}
             className="flex-1 text-sm text-text"
           />
         </View>
