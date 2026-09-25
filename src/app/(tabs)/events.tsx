@@ -1,5 +1,6 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { Screen } from '@/components';
+import { View, Text, FlatList, Pressable } from 'react-native';
+import { Icon, Screen } from '@/components';
+import { TAB_BAR_CLEARANCE } from '@/theme/layout';
 
 interface Event {
   id: string;
@@ -45,47 +46,47 @@ const MOCK_EVENTS: Event[] = [
 
 export default function EventsScreen() {
   return (
-    <Screen className="bg-background flex-1">
+    <Screen scroll={false} className="bg-background flex-1">
       {/* Header */}
       <View className="px-5 py-3 pb-2">
-        <Text className="text-7 font-medium text-text">Eventos</Text>
+        <Text className="text-7 font-semibold text-text">Eventos</Text>
       </View>
 
       {/* Events List */}
       <FlatList
         data={MOCK_EVENTS}
         keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingHorizontal: 5, paddingVertical: 3, gap: 5 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, paddingBottom: TAB_BAR_CLEARANCE, gap: 20 }}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => {}}>
+          <Pressable onPress={() => {}} className="active:opacity-90">
             {/* Event Card */}
-            <View className="rounded-md overflow-hidden relative h-42.5 bg-surface">
+            <View className="rounded-card overflow-hidden relative h-44 bg-surface items-center justify-center">
+              <Icon name="photo" size={32} color="#3f424d" />
+
               {/* Date Badge */}
-              <View className="absolute top-3 left-3 w-13.5 h-14.5 rounded-md bg-background/80 items-center justify-center z-10">
-                <Text className="text-5.5 font-medium leading-tight text-text">{item.day}</Text>
-                <Text className="text-2xs letter tracking-widest text-accent">{item.month}</Text>
+              <View className="absolute top-3 left-3 w-14 h-16 rounded-md bg-background/80 items-center justify-center z-10">
+                <Text className="text-5.5 font-semibold leading-tight text-text">{item.day}</Text>
+                <Text className="text-2xs tracking-widest text-accent">{item.month}</Text>
               </View>
 
               {/* Upcoming Badge */}
               {item.upcoming ? (
-                <View className="absolute top-3.5 right-3 px-2.5 py-0.75 rounded bg-accentScale-800">
+                <View className="absolute top-3.5 right-3 px-2.5 py-1 rounded-full bg-accentScale-800">
                   <Text className="text-2xs text-accentScale-100">Próximo</Text>
                 </View>
               ) : null}
-
-              {/* Cover Image Placeholder */}
-              <Text className="absolute right-3 bottom-2.5 text-2xs text-neutral-500 font-mono">
-                foto de portada
-              </Text>
             </View>
 
             {/* Event Info */}
-            <View className="gap-0.5 mt-1">
-              <Text className="text-4.25 font-medium text-text">{item.name}</Text>
-              <Text className="text-3 text-neutral-400">{item.date}</Text>
+            <View className="gap-1 mt-2.5">
+              <Text className="text-4.25 font-semibold text-text">{item.name}</Text>
+              <View className="flex-row items-center gap-1">
+                <Icon name="pin" size={12} color="#9397ab" />
+                <Text className="text-3 text-neutral-400">{item.date}</Text>
+              </View>
               <Text className="text-2.75 text-neutral-500">{item.description}</Text>
             </View>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
     </Screen>

@@ -1,5 +1,6 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { Screen } from '@/components';
+import { View, Text, FlatList, Pressable } from 'react-native';
+import { Icon, Screen } from '@/components';
+import { TAB_BAR_CLEARANCE } from '@/theme/layout';
 
 interface ProgressCard {
   id: string;
@@ -35,61 +36,62 @@ const MOCK_PROGRESS: ProgressCard[] = [
 
 export default function ProgressScreen() {
   return (
-    <Screen className="bg-background flex-1">
+    <Screen scroll={false} className="bg-background flex-1">
       {/* Header */}
       <View className="px-5 py-3 pb-2">
-        <Text className="text-7 font-medium text-text">Mi Progreso</Text>
+        <Text className="text-7 font-semibold text-text">Mi Progreso</Text>
       </View>
 
       {/* Progress Cards */}
       <FlatList
         data={MOCK_PROGRESS}
         keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingHorizontal: 5, paddingVertical: 2.5, gap: 2.5 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, gap: 12 }}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            className="px-3.5 py-3.5 rounded-md bg-surface active:bg-surface/80"
+          <Pressable
+            className="px-4 py-4 rounded-card bg-surface active:opacity-80"
             onPress={() => {}}
           >
             {/* Title and Percentage */}
-            <View className="flex-row items-baseline justify-between mb-2.5">
+            <View className="flex-row items-baseline justify-between mb-3">
               <Text className="text-md font-medium text-text flex-1">{item.name}</Text>
-              <Text className="text-sm text-accentScale-300">{item.label}</Text>
+              <Text className="text-sm font-semibold text-accentScale-300">{item.label}</Text>
             </View>
 
             {/* Progress Bar */}
-            <View className="h-1 rounded-0.5 bg-neutral-900 overflow-hidden mb-2.5">
+            <View className="h-1.5 rounded-full bg-neutral-900 overflow-hidden mb-3">
               <View
-                className="h-full bg-accent rounded-0.5 shadow-lg"
+                className="h-full bg-accent rounded-full"
                 style={{ width: `${item.progress}%` }}
               />
             </View>
 
             {/* Subtitle */}
             <Text className="text-2xs text-neutral-500">{item.subtitle}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
+        ListFooterComponent={
+          <View className="mt-2">
+            <Text className="text-2xs font-semibold tracking-widest text-neutral-500 uppercase mb-3.5">
+              Para Revisar
+            </Text>
+            <Pressable
+              className="flex-row items-center gap-3 px-3 py-2 rounded-card bg-surface active:opacity-80"
+              onPress={() => {}}
+            >
+              <View className="w-11 h-14 rounded-md bg-neutral-900 flex-shrink-0 items-center justify-center">
+                <Icon name="play" size={16} color="#9184d9" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text">Paso Doble</Text>
+                <Text className="text-2xs text-neutral-500">Salsa • Intermedio</Text>
+              </View>
+              <Icon name="chevronRight" size={16} color="#75798c" />
+            </Pressable>
+          </View>
+        }
+        ListFooterComponentStyle={{ paddingHorizontal: 20, paddingBottom: TAB_BAR_CLEARANCE }}
       />
-
-      {/* Review Section */}
-      <View className="px-5 mt-3.5 mb-5">
-        <Text className="text-2xs font-semibold tracking-widest text-neutral-500 uppercase mb-3.5">
-          Para Revisar
-        </Text>
-        <TouchableOpacity
-          className="flex-row items-center gap-3 px-3 py-1.5 rounded-md bg-surface active:bg-surface/80"
-          onPress={() => {}}
-        >
-          <View className="w-11 h-14 rounded-md bg-surface flex-shrink-0 items-center justify-center">
-            <Text className="text-lg">▶</Text>
-          </View>
-          <View className="flex-1">
-            <Text className="text-sm font-medium text-text">Paso Doble</Text>
-            <Text className="text-2xs text-neutral-500">Salsa • Intermedio</Text>
-          </View>
-          <Text className="text-neutral-600">›</Text>
-        </TouchableOpacity>
-      </View>
     </Screen>
   );
 }

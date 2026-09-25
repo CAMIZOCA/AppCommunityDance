@@ -1,5 +1,7 @@
-import { View, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native';
-import { Screen } from '@/components';
+import { useState } from 'react';
+import { View, Text, FlatList, Pressable, ScrollView } from 'react-native';
+import { Icon, Screen } from '@/components';
+import { TAB_BAR_CLEARANCE } from '@/theme/layout';
 
 interface DanceStep {
   id: string;
@@ -45,28 +47,52 @@ const MOCK_STEPS: DanceStep[] = [
 const STYLES = ['Todos', 'Mambo', 'Salsa', 'Bachata', 'Merengue'];
 const LEVELS = ['Todos', 'Básico', 'Intermedio', 'Avanzado'];
 
-export default function GalleryScreen() {
+function FilterChip({
+  label,
+  active,
+  onPress,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+}) {
   return (
-    <Screen className="bg-background flex-1">
+    <Pressable
+      onPress={onPress}
+      className={`px-3.5 py-1.5 rounded-full border active:opacity-80 ${
+        active ? 'bg-accent border-accent' : 'border-divider bg-surface'
+      }`}>
+      <Text className={`text-2xs font-medium ${active ? 'text-primary-foreground' : 'text-text'}`}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+export default function GalleryScreen() {
+  const [style, setStyle] = useState('Todos');
+  const [level, setLevel] = useState('Todos');
+
+  const steps = MOCK_STEPS.filter(
+    s => (style === 'Todos' || s.style === style) && (level === 'Todos' || s.level === level)
+  );
+
+  return (
+    <Screen scroll={false} className="bg-background flex-1">
       {/* Header */}
       <View className="px-5 py-3 pb-2">
-        <Text className="text-7 font-medium text-text">Galería</Text>
+        <Text className="text-7 font-semibold text-text">Galería</Text>
       </View>
 
       {/* Filters */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        className="px-5 py-1 mb-2"
-        contentContainerStyle={{ gap: 1.5 }}
+        className="mb-2"
+        contentContainerStyle={{ gap: 8, paddingHorizontal: 20 }}
       >
-        {STYLES.map(style => (
-          <TouchableOpacity
-            key={style}
-            className="px-3 py-0.75 rounded-full border border-divider"
-          >
-            <Text className="text-2xs font-medium text-text">{style}</Text>
-          </TouchableOpacity>
+        {STYLES.map(item => (
+          <FilterChip key={item} label={item} active={style === item} onPress={() => setStyle(item)} />
         ))}
       </ScrollView>
 
@@ -74,39 +100,34 @@ export default function GalleryScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        className="px-5 mb-2"
-        contentContainerStyle={{ gap: 1.5 }}
+        className="mb-3"
+        contentContainerStyle={{ gap: 8, paddingHorizontal: 20 }}
       >
-        {LEVELS.map(level => (
-          <TouchableOpacity
-            key={level}
-            className="px-2.5 py-0.5 rounded-full border border-divider"
-          >
-            <Text className="text-2xs font-medium text-text">{level}</Text>
-          </TouchableOpacity>
+        {LEVELS.map(item => (
+          <FilterChip key={item} label={item} active={level === item} onPress={() => setLevel(item)} />
         ))}
       </ScrollView>
 
       {/* Grid */}
       <FlatList
-        data={STEPS}
+        data={steps}
         keyExtractor={item => item.id}
         numColumns={2}
-        columnWrapperStyle={{ gap: 3 }}
-        contentContainerStyle={{ paddingHorizontal: 5, paddingVertical: 3, gap: 3 }}
+        columnWrapperStyle={{ gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: TAB_BAR_CLEARANCE, gap: 16 }}
         renderItem={({ item }) => (
-          <TouchableOpacity className="flex-1" onPress={() => {}}>
+          <Pressable className="flex-1 active:opacity-80" onPress={() => {}}>
             {/* Video Thumbnail */}
-            <View className="aspect-[4/5] rounded-md bg-surface items-center justify-center mb-1.75">
-              <View className="w-10.5 h-10.5 rounded-full border border-accent items-center justify-center">
-                <Text className="text-lg">▶</Text>
+            <View className="aspect-[4/5] rounded-2xl bg-surface items-center justify-center mb-2 overflow-hidden">
+              <View className="w-11 h-11 rounded-full border border-accent items-center justify-center">
+                <Icon name="play" size={16} color="#9184d9" />
               </View>
-              <Text className="absolute bottom-2 left-2 text-2xs text-neutral-500 font-mono">
+              <Text className="absolute bottom-2 left-2 text-2xs text-neutral-400 font-medium">
                 {item.duration}
               </Text>
               {item.learned ? (
-                <View className="absolute top-2 left-2 px-2 py-0.5 rounded-2.75 bg-accentScale-800 flex-row items-center gap-1">
-                  <Text>✓</Text>
+                <View className="absolute top-2 left-2 px-2 py-1 rounded-full bg-accentScale-800 flex-row items-center gap-1">
+                  <Icon name="check" size={10} color="#f5f4ff" />
                   <Text className="text-2xs text-accentScale-100">Aprendido</Text>
                 </View>
               ) : null}
@@ -115,11 +136,9 @@ export default function GalleryScreen() {
             {/* Info */}
             <Text className="text-sm font-medium text-text leading-5 mb-1">{item.name}</Text>
             <Text className="text-2xs text-neutral-500">{item.style} • {item.level}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
     </Screen>
   );
 }
-
-const STEPS = MOCK_STEPS;

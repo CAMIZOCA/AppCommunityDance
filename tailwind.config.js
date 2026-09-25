@@ -1,0 +1,16 @@
+const { colors, radius, fontFamily } = require('./src/theme/tokens');
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  presets: [require('nativewind/preset')],
+  darkMode: 'media',
+  theme: {
+    extend: {
+      colors,
+      borderRadius: radius,
+      fontFamily,
+    },
+  },
+  plugins: [],
+};
