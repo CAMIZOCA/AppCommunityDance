@@ -1,54 +1,15 @@
 import { useState } from 'react';
 import { View, Text, FlatList, Pressable, TextInput } from 'react-native';
+import { router } from 'expo-router';
 import { Avatar, Badge, Fab, Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
-import { colors } from '@/theme/tokens';
-
-interface Group {
-  id: string;
-  name: string;
-  initials: string;
-  preview: string;
-  time: string;
-  unread?: number;
-  level: string;
-  steps: number;
-}
-
-const MOCK_GROUPS: Group[] = [
-  {
-    id: '1',
-    name: 'Mambo Básico',
-    initials: 'MB',
-    preview: 'Últimas pasos de la clase...',
-    time: '2h',
-    unread: 3,
-    level: 'Básico',
-    steps: 8,
-  },
-  {
-    id: '2',
-    name: 'Salsa Intermedia',
-    initials: 'SI',
-    preview: 'Movimientos avanzados de giro',
-    time: '4h',
-    level: 'Intermedio',
-    steps: 12,
-  },
-  {
-    id: '3',
-    name: 'Bachata Romántica',
-    initials: 'BR',
-    preview: 'Técnica de pasos básicos',
-    time: '1d',
-    level: 'Básico',
-    steps: 6,
-  },
-];
+import { useThemeColors } from '@/theme/useThemeColors';
+import { GROUPS } from '@/data/groups';
 
 export default function HomeScreen() {
+  const colors = useThemeColors();
   const [searchQuery, setSearchQuery] = useState('');
-  const [groups] = useState(MOCK_GROUPS);
+  const [groups] = useState(GROUPS);
 
   const filteredGroups = groups.filter(g =>
     g.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -93,7 +54,7 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <Pressable
             className="flex-row gap-3 items-center py-3 px-3 rounded-2xl active:bg-surface"
-            onPress={() => {}}
+            onPress={() => router.push({ pathname: '/grupo/[id]', params: { id: item.id } })}
           >
             <Avatar initials={item.initials} size="md" />
 

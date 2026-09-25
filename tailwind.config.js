@@ -4,7 +4,7 @@ const { colors, radius, fontFamily } = require('./src/theme/tokens');
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
-  darkMode: 'media',
+  darkMode: 'class',
   theme: {
     extend: {
       colors,

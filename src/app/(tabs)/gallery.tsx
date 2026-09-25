@@ -1,49 +1,10 @@
 import { useState } from 'react';
 import { View, Text, FlatList, Pressable, ScrollView } from 'react-native';
+import { router } from 'expo-router';
 import { Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
-import { colors } from '@/theme/tokens';
-
-interface DanceStep {
-  id: string;
-  name: string;
-  duration: string;
-  style: string;
-  level: string;
-  learned?: boolean;
-}
-
-const MOCK_STEPS: DanceStep[] = [
-  {
-    id: '1',
-    name: 'Giro Básico',
-    duration: '1:20',
-    style: 'Mambo',
-    level: 'Básico',
-  },
-  {
-    id: '2',
-    name: 'Paso Doble',
-    duration: '2:15',
-    style: 'Salsa',
-    level: 'Intermedio',
-    learned: true,
-  },
-  {
-    id: '3',
-    name: 'Cambio de Peso',
-    duration: '0:45',
-    style: 'Mambo',
-    level: 'Básico',
-  },
-  {
-    id: '4',
-    name: 'Vuelta Lateral',
-    duration: '1:50',
-    style: 'Bachata',
-    level: 'Intermedio',
-  },
-];
+import { useThemeColors } from '@/theme/useThemeColors';
+import { STEPS } from '@/data/steps';
 
 const STYLES = ['Todos', 'Mambo', 'Salsa', 'Bachata', 'Merengue'];
 const LEVELS = ['Todos', 'Básico', 'Intermedio', 'Avanzado'];
@@ -71,10 +32,11 @@ function FilterChip({
 }
 
 export default function GalleryScreen() {
+  const colors = useThemeColors();
   const [style, setStyle] = useState('Todos');
   const [level, setLevel] = useState('Todos');
 
-  const steps = MOCK_STEPS.filter(
+  const steps = STEPS.filter(
     s => (style === 'Todos' || s.style === style) && (level === 'Todos' || s.level === level)
   );
 
@@ -117,11 +79,13 @@ export default function GalleryScreen() {
         columnWrapperStyle={{ gap: 12 }}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: TAB_BAR_CLEARANCE, gap: 16 }}
         renderItem={({ item }) => (
-          <Pressable className="flex-1 active:opacity-80" onPress={() => {}}>
+          <Pressable
+            className="flex-1 active:opacity-80"
+            onPress={() => router.push({ pathname: '/paso/[id]', params: { id: item.id } })}>
             {/* Video Thumbnail */}
             <View className="aspect-[4/5] rounded-2xl bg-surface items-center justify-center mb-2 overflow-hidden">
               <View className="w-11 h-11 rounded-full border border-accent items-center justify-center">
-                <Icon name="play" size={16} color={colors.accent.DEFAULT} />
+                <Icon name="play" size={16} color={colors.accent} />
               </View>
               <Text className="absolute bottom-2 left-2 text-2xs text-neutral-400 font-medium">
                 {item.duration}

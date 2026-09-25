@@ -9,6 +9,7 @@ const ICONS = {
   closeCircle: { ios: 'xmark.circle.fill', android: 'cancel', web: 'cancel' },
   add: { ios: 'plus', android: 'add', web: 'add' },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
+  chevronLeft: { ios: 'chevron.left', android: 'chevron_left', web: 'chevron_left' },
   play: { ios: 'play.fill', android: 'play_arrow', web: 'play_arrow' },
   check: { ios: 'checkmark', android: 'check', web: 'check' },
   checkCircle: { ios: 'checkmark.circle.fill', android: 'check_circle', web: 'check_circle' },

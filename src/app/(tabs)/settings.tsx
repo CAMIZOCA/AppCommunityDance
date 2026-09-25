@@ -1,12 +1,14 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
+import { useColorScheme } from 'nativewind';
 import { Avatar, Icon, IconName, Screen } from '@/components';
-import { colors } from '@/theme/tokens';
+import { useThemeColors } from '@/theme/useThemeColors';
 
 type SettingsRow = {
   icon: IconName;
   iconBg: string;
   label: string;
   value?: string;
+  onPress?: () => void;
 };
 
 type SettingsSection = {
@@ -14,31 +16,7 @@ type SettingsSection = {
   rows: SettingsRow[];
 };
 
-const SECTIONS: SettingsSection[] = [
-  {
-    title: 'Cuenta',
-    rows: [
-      { icon: 'bell', iconBg: 'bg-red-500', label: 'Notificaciones' },
-      { icon: 'lock', iconBg: 'bg-emerald-600', label: 'Privacidad' },
-    ],
-  },
-  {
-    title: 'Preferencias',
-    rows: [
-      { icon: 'moon', iconBg: 'bg-indigo-600', label: 'Apariencia', value: 'Oscuro' },
-      { icon: 'globe', iconBg: 'bg-sky-600', label: 'Idioma', value: 'Español' },
-    ],
-  },
-  {
-    title: 'Soporte',
-    rows: [
-      { icon: 'help', iconBg: 'bg-amber-600', label: 'Ayuda' },
-      { icon: 'info', iconBg: 'bg-neutral-600', label: 'Acerca de', value: '1.0.0' },
-    ],
-  },
-];
-
-function SettingsGroup({ section }: { section: SettingsSection }) {
+function SettingsGroup({ section, colors }: { section: SettingsSection; colors: ReturnType<typeof useThemeColors> }) {
   return (
     <View className="px-5 mb-6">
       {section.title ? (
@@ -53,9 +31,9 @@ function SettingsGroup({ section }: { section: SettingsSection }) {
             className={`flex-row items-center gap-3 px-3.5 py-3 active:bg-black/10 ${
               i < section.rows.length - 1 ? 'border-b border-divider' : ''
             }`}
-            onPress={() => {}}>
+            onPress={row.onPress}>
             <View className={`w-7 h-7 rounded-[8px] items-center justify-center ${row.iconBg}`}>
-              <Icon name={row.icon} size={15} color={colors.primary.foreground} />
+              <Icon name={row.icon} size={15} color={colors.foreground} />
             </View>
             <Text className="flex-1 text-sm font-medium text-text">{row.label}</Text>
             {row.value ? <Text className="text-sm text-neutral-500">{row.value}</Text> : null}
@@ -68,6 +46,40 @@ function SettingsGroup({ section }: { section: SettingsSection }) {
 }
 
 export default function SettingsScreen() {
+  const colors = useThemeColors();
+  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const isDark = colorScheme !== 'light';
+
+  const sections: SettingsSection[] = [
+    {
+      title: 'Cuenta',
+      rows: [
+        { icon: 'bell', iconBg: 'bg-red-500', label: 'Notificaciones' },
+        { icon: 'lock', iconBg: 'bg-emerald-600', label: 'Privacidad' },
+      ],
+    },
+    {
+      title: 'Preferencias',
+      rows: [
+        {
+          icon: 'moon',
+          iconBg: 'bg-indigo-600',
+          label: 'Apariencia',
+          value: isDark ? 'Oscuro' : 'Claro',
+          onPress: toggleColorScheme,
+        },
+        { icon: 'globe', iconBg: 'bg-sky-600', label: 'Idioma', value: 'Español' },
+      ],
+    },
+    {
+      title: 'Soporte',
+      rows: [
+        { icon: 'help', iconBg: 'bg-amber-600', label: 'Ayuda' },
+        { icon: 'info', iconBg: 'bg-neutral-600', label: 'Acerca de', value: '1.0.0' },
+      ],
+    },
+  ];
+
   return (
     <Screen scroll={false} className="bg-background flex-1">
       <View className="px-5 py-3 pb-2">
@@ -89,8 +101,8 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
 
-        {SECTIONS.map(section => (
-          <SettingsGroup key={section.title} section={section} />
+        {sections.map(section => (
+          <SettingsGroup key={section.title} section={section} colors={colors} />
         ))}
 
         {/* Cerrar sesión */}
@@ -98,7 +110,7 @@ export default function SettingsScreen() {
           <Pressable
             className="flex-row items-center justify-center gap-2 rounded-card bg-surface px-4 py-3.5 active:bg-black/10"
             onPress={() => {}}>
-            <Icon name="logout" size={16} color={colors.danger.DEFAULT} />
+            <Icon name="logout" size={16} color={colors.danger} />
             <Text className="text-sm font-semibold text-danger">Cerrar sesión</Text>
           </Pressable>
         </View>

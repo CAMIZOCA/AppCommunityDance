@@ -1,14 +1,16 @@
 import { Tabs } from 'expo-router';
 import { Icon } from '@/components';
 import { GlassSurface } from '@/components/GlassSurface';
-import { colors } from '@/theme/tokens';
+import { useThemeColors } from '@/theme/useThemeColors';
 
 export default function TabsLayout() {
+  const colors = useThemeColors();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.accent.DEFAULT,
+        tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.neutral[500],
         tabBarStyle: {
           position: 'absolute',

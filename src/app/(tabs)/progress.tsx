@@ -1,41 +1,15 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
+import { router } from 'expo-router';
 import { Icon, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
-import { colors } from '@/theme/tokens';
-
-interface ProgressCard {
-  id: string;
-  name: string;
-  progress: number;
-  label: string;
-  subtitle: string;
-}
-
-const MOCK_PROGRESS: ProgressCard[] = [
-  {
-    id: '1',
-    name: 'Mambo Básico',
-    progress: 75,
-    label: '75%',
-    subtitle: '6 de 8 pasos completados',
-  },
-  {
-    id: '2',
-    name: 'Salsa Intermedia',
-    progress: 42,
-    label: '42%',
-    subtitle: '5 de 12 pasos completados',
-  },
-  {
-    id: '3',
-    name: 'Bachata Romántica',
-    progress: 100,
-    label: '100%',
-    subtitle: 'Todos los pasos dominados',
-  },
-];
+import { useThemeColors } from '@/theme/useThemeColors';
+import { PROGRESS } from '@/data/progress';
+import { STEPS } from '@/data/steps';
 
 export default function ProgressScreen() {
+  const colors = useThemeColors();
+  const reviewStep = STEPS.find(s => s.id === '2')!;
+
   return (
     <Screen scroll={false} className="bg-background flex-1">
       {/* Header */}
@@ -45,13 +19,13 @@ export default function ProgressScreen() {
 
       {/* Progress Cards */}
       <FlatList
-        data={MOCK_PROGRESS}
+        data={PROGRESS}
         keyExtractor={item => item.id}
         contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, gap: 12 }}
         renderItem={({ item }) => (
           <Pressable
             className="px-4 py-4 rounded-card bg-surface active:opacity-80"
-            onPress={() => {}}
+            onPress={() => router.push({ pathname: '/grupo/[id]', params: { id: item.id } })}
           >
             {/* Title and Percentage */}
             <View className="flex-row items-baseline justify-between mb-3">
@@ -78,14 +52,14 @@ export default function ProgressScreen() {
             </Text>
             <Pressable
               className="flex-row items-center gap-3 px-3 py-2 rounded-card bg-surface active:opacity-80"
-              onPress={() => {}}
+              onPress={() => router.push({ pathname: '/paso/[id]', params: { id: reviewStep.id } })}
             >
               <View className="w-11 h-14 rounded-md bg-neutral-900 flex-shrink-0 items-center justify-center">
-                <Icon name="play" size={16} color={colors.accent.DEFAULT} />
+                <Icon name="play" size={16} color={colors.accent} />
               </View>
               <View className="flex-1">
-                <Text className="text-sm font-medium text-text">Paso Doble</Text>
-                <Text className="text-2xs text-neutral-500">Salsa • Intermedio</Text>
+                <Text className="text-sm font-medium text-text">{reviewStep.name}</Text>
+                <Text className="text-2xs text-neutral-500">{reviewStep.style} • {reviewStep.level}</Text>
               </View>
               <Icon name="chevronRight" size={16} color={colors.neutral[600]} />
             </Pressable>

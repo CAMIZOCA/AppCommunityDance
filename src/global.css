@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Variables de color: claro en :root, oscuro en .dark. Deben reflejar
+   exactamente los valores de `light`/`dark` en src/theme/tokens.js. */
+@layer base {
+  :root {
+    --color-background: #f7f6fb;
+    --color-surface: #ffffff;
+    --color-text: #1c1b26;
+    --color-accent: #6a5bc9;
+    --color-danger: #dc2626;
+    --color-divider: rgba(28, 27, 38, 0.1);
+    --color-muted: #6b6f82;
+
+    --color-neutral-100: #20222c;
+    --color-neutral-200: #2b2d3a;
+    --color-neutral-300: #33354a;
+    --color-neutral-400: #4a4d63;
+    --color-neutral-500: #6b6f82;
+    --color-neutral-600: #8a8da0;
+    --color-neutral-700: #a6a8b8;
+    --color-neutral-800: #dedce6;
+    --color-neutral-900: #ece9f2;
+
+    --color-accent-scale-100: #3c3470;
+    --color-accent-scale-200: #4a4187;
+    --color-accent-scale-300: #5d5294;
+    --color-accent-scale-400: #796cbf;
+    --color-accent-scale-500: #968ae0;
+    --color-accent-scale-600: #b5abfc;
+    --color-accent-scale-700: #d2cefd;
+    --color-accent-scale-800: #efeaff;
+    --color-accent-scale-900: #f5f4ff;
+  }
+
+  .dark {
+    --color-background: #161826;
+    --color-surface: #232532;
+    --color-text: #e9e9ed;
+    --color-accent: #9184d9;
+    --color-danger: #ef4444;
+    --color-divider: rgba(233, 233, 237, 0.16);
+    --color-muted: #9397ab;
+
+    --color-neutral-100: #f3f5fe;
+    --color-neutral-200: #e4e7f5;
+    --color-neutral-300: #cfd3e5;
+    --color-neutral-400: #b2b6ca;
+    --color-neutral-500: #9397ab;
+    --color-neutral-600: #75798c;
+    --color-neutral-700: #595d6c;
+    --color-neutral-800: #3f424d;
+    --color-neutral-900: #292b31;
+
+    --color-accent-scale-100: #f5f4ff;
+    --color-accent-scale-200: #e7e5fe;
+    --color-accent-scale-300: #d2cefd;
+    --color-accent-scale-400: #b5abfc;
+    --color-accent-scale-500: #968ae0;
+    --color-accent-scale-600: #796cbf;
+    --color-accent-scale-700: #5d5294;
+    --color-accent-scale-800: #423a6a;
+    --color-accent-scale-900: #2b2741;
+  }
+}

@@ -1,6 +1,6 @@
 import { Pressable } from 'react-native';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
-import { colors } from '@/theme/tokens';
+import { useThemeColors } from '@/theme/useThemeColors';
 import { Icon, IconName } from './Icon';
 
 type Props = {
@@ -10,6 +10,8 @@ type Props = {
 };
 
 export function Fab({ icon = 'add', onPress, className = '' }: Props) {
+  const colors = useThemeColors();
+
   return (
     <Pressable
       onPress={onPress}
@@ -18,7 +20,7 @@ export function Fab({ icon = 'add', onPress, className = '' }: Props) {
         bottom: TAB_BAR_CLEARANCE,
         boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.35)',
       }}>
-      <Icon name={icon} size={26} color={colors.primary.foreground} />
+      <Icon name={icon} size={26} color={colors.foreground} />
     </Pressable>
   );
 }

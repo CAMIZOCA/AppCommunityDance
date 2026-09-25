@@ -2,6 +2,7 @@ export * from './Avatar';
 export * from './Badge';
 export * from './Button';
 export * from './Card';
+export * from './DetailHeader';
 export * from './Fab';
 export * from './GlassSurface';
 export * from './Icon';
