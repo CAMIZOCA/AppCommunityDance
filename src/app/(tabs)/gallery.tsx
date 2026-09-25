@@ -52,7 +52,8 @@ export default function GalleryScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         className="mb-2"
-        contentContainerStyle={{ gap: 8, paddingHorizontal: 20 }}
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={{ gap: 8, paddingHorizontal: 20, alignItems: 'center' }}
       >
         {STYLES.map(item => (
           <FilterChip key={item} label={item} active={style === item} onPress={() => setStyle(item)} />
@@ -64,7 +65,8 @@ export default function GalleryScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         className="mb-3"
-        contentContainerStyle={{ gap: 8, paddingHorizontal: 20 }}
+        style={{ flexGrow: 0 }}
+        contentContainerStyle={{ gap: 8, paddingHorizontal: 20, alignItems: 'center' }}
       >
         {LEVELS.map(item => (
           <FilterChip key={item} label={item} active={level === item} onPress={() => setLevel(item)} />
