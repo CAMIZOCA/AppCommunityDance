@@ -5,9 +5,10 @@ import { Icon } from './Icon';
 
 type Props = {
   title: string;
+  actions?: React.ReactNode;
 };
 
-export function DetailHeader({ title }: Props) {
+export function DetailHeader({ title, actions }: Props) {
   const colors = useThemeColors();
 
   return (
@@ -18,9 +19,10 @@ export function DetailHeader({ title }: Props) {
         className="w-9 h-9 items-center justify-center rounded-full active:bg-surface">
         <Icon name="chevronLeft" size={20} color={colors.text} />
       </Pressable>
-      <Text className="text-lg font-semibold text-text flex-1" numberOfLines={1}>
+      <Text className="font-heading text-lg text-text flex-1" numberOfLines={1}>
         {title}
       </Text>
+      {actions ? <View className="flex-row items-center gap-1">{actions}</View> : null}
     </View>
   );
 }

@@ -9,9 +9,9 @@ const VARIANT_CLASSES: Record<Variant, string> = {
 };
 
 const TEXT_CLASSES: Record<Variant, string> = {
-  accent: 'text-background font-bold',
-  neutral: 'text-neutral-300 font-medium',
-  outline: 'text-text font-medium',
+  accent: 'text-background font-heading',
+  neutral: 'text-neutral-300 font-body',
+  outline: 'text-text font-body',
 };
 
 type Props = {

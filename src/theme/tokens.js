@@ -20,6 +20,7 @@ const dark = {
   divider: 'rgba(233, 233, 237, 0.16)',
   muted: '#9397ab',
   foreground: '#FFFFFF',
+  overlay: '#000000',
   neutral: {
     100: '#f3f5fe',
     200: '#e4e7f5',
@@ -53,6 +54,7 @@ const light = {
   divider: 'rgba(28, 27, 38, 0.1)',
   muted: '#6b6f82',
   foreground: '#FFFFFF',
+  overlay: '#000000',
   neutral: {
     100: '#20222c',
     200: '#2b2d3a',
@@ -132,8 +134,8 @@ module.exports = {
     full: '9999px',
   },
   fontFamily: {
-    'body': 'Inter',
-    'heading': 'Inter',
+    'body': 'Inter_400Regular',
+    'heading': 'Inter_500Medium',
   },
   fontSize: {
     '2xs': '10px',

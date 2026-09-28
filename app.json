@@ -8,7 +8,8 @@
     "scheme": "miapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.camizoca.miapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -37,6 +38,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "73962dcd-cb7c-4b8f-9520-7db8704fb733"
+      }
+    },
+    "owner": "camizoca"
   }
 }

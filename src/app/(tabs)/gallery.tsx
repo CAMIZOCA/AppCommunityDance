@@ -1,111 +1,98 @@
 import { useState } from 'react';
 import { View, Text, FlatList, Pressable, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { Icon, Screen } from '@/components';
+import { Chip, Fab, MediaPlaceholder, Screen } from '@/components';
 import { TAB_BAR_CLEARANCE } from '@/theme/layout';
-import { useThemeColors } from '@/theme/useThemeColors';
-import { STEPS } from '@/data/steps';
+import { useT } from '@/i18n';
+import { useAppStore } from '@/store/useAppStore';
+import { CURRENT_STUDENT_ID } from '@/data/people';
+import type { Style } from '@/data/catalog';
+import { STYLES, LEVELS } from '@/data/catalog';
+import type { Level } from '@/data/people';
+import { fmtDuration } from '@/utils/format';
 
-const STYLES = ['Todos', 'Mambo', 'Salsa', 'Bachata', 'Merengue'];
-const LEVELS = ['Todos', 'Básico', 'Intermedio', 'Avanzado'];
-
-function FilterChip({
-  label,
-  active,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      className={`px-3.5 py-1.5 rounded-full border active:opacity-80 ${
-        active ? 'bg-accent border-accent' : 'border-divider bg-surface'
-      }`}>
-      <Text className={`text-2xs font-medium ${active ? 'text-primary-foreground' : 'text-text'}`}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
+type StyleFilter = Style | 'todos';
+type LevelFilter = Level | 'todos';
 
 export default function GalleryScreen() {
-  const colors = useThemeColors();
-  const [style, setStyle] = useState('Todos');
-  const [level, setLevel] = useState('Todos');
+  const { t } = useT();
+  const role = useAppStore(s => s.role);
+  const filterResetKey = useAppStore(s => s.filterResetKey);
+  const steps = useAppStore(s => s.steps);
+  const groups = useAppStore(s => s.groups);
+  const learnedStepIds = useAppStore(s => s.learnedStepIds);
+  const [style, setStyle] = useState<StyleFilter>('todos');
+  const [level, setLevel] = useState<LevelFilter>('todos');
 
-  const steps = STEPS.filter(
-    s => (style === 'Todos' || s.style === style) && (level === 'Todos' || s.level === level)
+  const myGroupIds = groups.filter(g => g.memberIds.includes(CURRENT_STUDENT_ID)).map(g => g.id);
+
+  const visibleSteps = steps.filter(s => role === 'profe' || s.groupIds.some(gid => myGroupIds.includes(gid)));
+  const filteredSteps = visibleSteps.filter(
+    s => (style === 'todos' || s.style === style) && (level === 'todos' || s.level === level)
   );
 
   return (
-    <Screen scroll={false} className="bg-background flex-1">
-      {/* Header */}
-      <View className="px-5 py-3 pb-2">
-        <Text className="text-7 font-semibold text-text">Galería</Text>
+    <Screen key={filterResetKey} scroll={false} className="bg-background flex-1">
+      <View style={{ height: 46, overflow: 'hidden' }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8, paddingHorizontal: 20, alignItems: 'center' }}>
+          <Chip label={t('gallery.all')} active={style === 'todos'} onPress={() => setStyle('todos')} />
+          {STYLES.map(s => (
+            <Chip key={s} label={t(`styles.${s}`)} active={style === s} onPress={() => setStyle(s)} />
+          ))}
+        </ScrollView>
       </View>
 
-      {/* Filters */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="mb-2"
-        style={{ flexGrow: 0 }}
-        contentContainerStyle={{ gap: 8, paddingHorizontal: 20, alignItems: 'center' }}
-      >
-        {STYLES.map(item => (
-          <FilterChip key={item} label={item} active={style === item} onPress={() => setStyle(item)} />
-        ))}
-      </ScrollView>
+      <View style={{ height: 50, overflow: 'hidden' }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8, paddingHorizontal: 20, alignItems: 'center' }}>
+          <Chip label={t('gallery.all')} active={level === 'todos'} onPress={() => setLevel('todos')} />
+          {LEVELS.map(l => (
+            <Chip key={l} label={t(`levels.${l}`)} active={level === l} onPress={() => setLevel(l)} />
+          ))}
+        </ScrollView>
+      </View>
 
-      {/* Level Filters */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="mb-3"
-        style={{ flexGrow: 0 }}
-        contentContainerStyle={{ gap: 8, paddingHorizontal: 20, alignItems: 'center' }}
-      >
-        {LEVELS.map(item => (
-          <FilterChip key={item} label={item} active={level === item} onPress={() => setLevel(item)} />
-        ))}
-      </ScrollView>
-
-      {/* Grid */}
       <FlatList
-        data={steps}
+        data={filteredSteps}
         keyExtractor={item => item.id}
         numColumns={2}
         columnWrapperStyle={{ gap: 12 }}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: TAB_BAR_CLEARANCE, gap: 16 }}
-        renderItem={({ item }) => (
-          <Pressable
-            className="flex-1 active:opacity-80"
-            onPress={() => router.push({ pathname: '/paso/[id]', params: { id: item.id } })}>
-            {/* Video Thumbnail */}
-            <View className="aspect-[4/5] rounded-2xl bg-surface items-center justify-center mb-2 overflow-hidden">
-              <View className="w-11 h-11 rounded-full border border-accent items-center justify-center">
-                <Icon name="play" size={16} color={colors.accent} />
-              </View>
-              <Text className="absolute bottom-2 left-2 text-2xs text-neutral-400 font-medium">
-                {item.duration}
-              </Text>
-              {item.learned ? (
-                <View className="absolute top-2 left-2 px-2 py-1 rounded-full bg-accentScale-800 flex-row items-center gap-1">
-                  <Icon name="check" size={10} color={colors.accentScale[100]} />
-                  <Text className="text-2xs text-accentScale-100">Aprendido</Text>
+        ListEmptyComponent={
+          <Text className="font-body px-1 py-6 text-center text-sm text-neutral-500">{t('gallery.empty')}</Text>
+        }
+        renderItem={({ item }) => {
+          const learned = learnedStepIds.includes(item.id);
+          return (
+            <Pressable
+              className="flex-1 active:opacity-80"
+              onPress={() => router.push({ pathname: '/paso/[id]', params: { id: item.id, from: 'gallery' } })}>
+              <MediaPlaceholder
+                className="mb-2 rounded-2xl"
+                style={{ aspectRatio: 4 / 5 }}
+                showPlay
+                label={`video · ${fmtDuration(item.durationSec)}`}
+              />
+              {role === 'alumno' && learned ? (
+                <View className="absolute left-2 top-2 flex-row items-center gap-1 rounded-full bg-accentScale-900 px-2 py-1">
+                  <Text className="font-heading text-2xs text-accentScale-200">{t('gallery.learnedBadge')}</Text>
                 </View>
               ) : null}
-            </View>
-
-            {/* Info */}
-            <Text className="text-sm font-medium text-text leading-5 mb-1">{item.name}</Text>
-            <Text className="text-2xs text-neutral-500">{item.style} • {item.level}</Text>
-          </Pressable>
-        )}
+              <Text className="font-heading mb-1 text-sm leading-5 text-text">{item.name}</Text>
+              <Text className="font-body text-2xs text-neutral-500">
+                {t(`styles.${item.style}`)} · {t(`levels.${item.level}`)}
+              </Text>
+            </Pressable>
+          );
+        }}
       />
+
+      {role === 'profe' ? <Fab icon="add" label={t('gallery.fabNew')} onPress={() => router.push('/paso/nuevo')} /> : null}
     </Screen>
   );
 }

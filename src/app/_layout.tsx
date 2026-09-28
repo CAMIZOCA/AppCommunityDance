@@ -1,27 +1,32 @@
 import '@/global.css';
 
 import { useEffect } from 'react';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { colorScheme, useColorScheme } from 'nativewind';
+import { colorScheme } from 'nativewind';
+import { useFonts, Inter_400Regular, Inter_500Medium } from '@expo-google-fonts/inter';
+import { ToastHost } from '@/components/ToastHost';
+import { DownloadBanner } from '@/components/DownloadBanner';
 
 export default function RootLayout() {
-  const { colorScheme: scheme } = useColorScheme();
+  const [fontsLoaded] = useFonts({ Inter_400Regular, Inter_500Medium });
 
-  // MyMambo es una app oscura por diseño ("Nocturne"); el modo claro es una
-  // preferencia que el usuario activa a mano desde Ajustes > Apariencia, no
-  // algo que deba seguir el tema del sistema. Se fija al montar (no a nivel
-  // de módulo) porque en web corre primero en un entorno sin `window`.
+  // MyMambo es una app oscura por diseño ("Nocturne"): no sigue el tema del
+  // sistema ni expone un toggle (no está en el spec).
   useEffect(() => {
     colorScheme.set('dark');
   }, []);
 
+  if (!fontsLoaded) return null;
+
   return (
-    <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DarkTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
       </Stack>
-      <StatusBar style="auto" />
+      <ToastHost />
+      <DownloadBanner />
+      <StatusBar style="light" />
     </ThemeProvider>
   );
 }

@@ -1,15 +1,17 @@
 import { Tabs } from 'expo-router';
-import { Icon } from '@/components';
-import { GlassSurface } from '@/components/GlassSurface';
+import { AppHeader, GlassSurface, Icon } from '@/components';
 import { useThemeColors } from '@/theme/useThemeColors';
+import { useT } from '@/i18n';
 
 export default function TabsLayout() {
   const colors = useThemeColors();
+  const { t } = useT();
 
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        header: ({ options }) => <AppHeader title={options.title ?? ''} />,
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.neutral[500],
         tabBarStyle: {
@@ -30,7 +32,7 @@ export default function TabsLayout() {
         ),
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontFamily: 'Inter_500Medium',
           marginTop: 2,
         },
       }}
@@ -38,36 +40,37 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Grupos',
-          tabBarIcon: ({ color }) => <Icon name="people" size={24} color={color} />,
+          title: t('tabs.groups'),
+          tabBarIcon: ({ color, focused }) => (
+            <Icon name="people" size={24} color={color as string} weight={focused ? 'fill' : 'regular'} />
+          ),
         }}
       />
       <Tabs.Screen
         name="gallery"
         options={{
-          title: 'Galería',
-          tabBarIcon: ({ color }) => <Icon name="gallery" size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="progress"
-        options={{
-          title: 'Progreso',
-          tabBarIcon: ({ color }) => <Icon name="chart" size={24} color={color} />,
+          title: t('tabs.gallery'),
+          tabBarIcon: ({ color, focused }) => (
+            <Icon name="gallery" size={24} color={color as string} weight={focused ? 'fill' : 'regular'} />
+          ),
         }}
       />
       <Tabs.Screen
         name="events"
         options={{
-          title: 'Eventos',
-          tabBarIcon: ({ color }) => <Icon name="calendar" size={24} color={color} />,
+          title: t('tabs.events'),
+          tabBarIcon: ({ color, focused }) => (
+            <Icon name="calendar" size={24} color={color as string} weight={focused ? 'fill' : 'regular'} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="progress"
         options={{
-          title: 'Ajustes',
-          tabBarIcon: ({ color }) => <Icon name="gear" size={24} color={color} />,
+          title: t('tabs.progress'),
+          tabBarIcon: ({ color, focused }) => (
+            <Icon name="chart" size={24} color={color as string} weight={focused ? 'fill' : 'regular'} />
+          ),
         }}
       />
     </Tabs>

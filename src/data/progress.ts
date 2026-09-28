@@ -1,33 +1,21 @@
-// El id de cada tarjeta coincide con el id del grupo correspondiente en
-// src/data/groups.ts, así que el detalle de progreso reutiliza /grupo/[id].
-export interface ProgressCard {
-  id: string;
-  name: string;
-  progress: number;
-  label: string;
-  subtitle: string;
+// Progreso determinístico para alumnos que no sean Sofía (la única con datos
+// reales, guardados en el store). Se deriva de un hash simple del id de
+// alumno + id de grupo, para que sea estable entre renders y reinicios.
+function hash(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 31 + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
 }
 
-export const PROGRESS: ProgressCard[] = [
-  {
-    id: '1',
-    name: 'Mambo Básico',
-    progress: 75,
-    label: '75%',
-    subtitle: '6 de 8 pasos completados',
-  },
-  {
-    id: '2',
-    name: 'Salsa Intermedia',
-    progress: 42,
-    label: '42%',
-    subtitle: '5 de 12 pasos completados',
-  },
-  {
-    id: '3',
-    name: 'Bachata Romántica',
-    progress: 100,
-    label: '100%',
-    subtitle: 'Todos los pasos dominados',
-  },
-];
+/** Devuelve un porcentaje 0-100 estable para (personId, groupId). */
+export function hashProgressPercent(personId: string, groupId: string): number {
+  return 35 + (hash(`${personId}:${groupId}`) % 61); // rango 35-95
+}
+
+/** Cantidad de pasos "aprendidos" derivada del porcentaje, para mostrar n/total. */
+export function hashLearnedCount(personId: string, groupId: string, total: number): number {
+  const pct = hashProgressPercent(personId, groupId);
+  return Math.max(0, Math.min(total, Math.round((pct / 100) * total)));
+}
