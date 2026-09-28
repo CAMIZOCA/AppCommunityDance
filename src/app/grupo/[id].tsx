@@ -132,7 +132,7 @@ export default function GrupoDetailScreen() {
                           {step.name}
                         </Text>
                         <Text className="font-body text-2xs text-neutral-500">
-                          8 tiempos · {fmtDuration(step.durationSec)}
+                          {step.combo ? `Combo ${step.combo} · ` : ''}8 tiempos · {fmtDuration(step.durationSec)}
                         </Text>
                       </View>
                       {role === 'alumno' ? (
