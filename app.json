@@ -53,7 +53,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Mi Mambo necesita acceso a la cámara para escanear códigos QR de invitación a grupos."
+          "cameraPermission": "Mi Mambo necesita acceso a la cámara para escanear códigos QR de invitación a grupos.",
+          "recordAudioAndroid": false
         }
       ],
       [
