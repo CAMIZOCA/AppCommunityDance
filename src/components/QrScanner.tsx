@@ -5,15 +5,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
 import { Icon } from './Icon';
+import { Button } from './Button';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   onScan: (data: string) => void;
-  onSimulate: () => void;
 };
 
-export function QrScanner({ visible, onClose, onScan, onSimulate }: Props) {
+export function QrScanner({ visible, onClose, onScan }: Props) {
   const colors = useThemeColors();
   const { t } = useT();
   const insets = useSafeAreaInsets();
@@ -38,6 +38,9 @@ export function QrScanner({ visible, onClose, onScan, onSimulate }: Props) {
     onScan(result.data);
   }
 
+  // Permiso respondido con "no" (o aún sin respuesta mientras se pide).
+  const denied = !!permission && !permission.granted;
+
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View className="flex-1 bg-black">
@@ -48,17 +51,29 @@ export function QrScanner({ visible, onClose, onScan, onSimulate }: Props) {
             barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
             onBarcodeScanned={handleBarcodeScanned}
           />
-        ) : (
-          <View className="flex-1 bg-neutral-100" />
-        )}
+        ) : null}
 
-        <View className="absolute inset-0 items-center justify-center">
-          <View
-            className="h-56 w-56 rounded-3xl border-2 border-accent"
-            style={{ boxShadow: '0 0 28px 6px rgba(145,132,217,0.6)' }}
-          />
-          <Text className="font-body mt-4 text-sm text-white">{t('join.cameraHint')}</Text>
-        </View>
+        {denied ? (
+          <View className="flex-1 items-center justify-center gap-4 px-8">
+            <Icon name="qrcode" size={40} color={colors.neutral[500]} />
+            <Text className="font-heading text-center text-md text-text">{t('states.cameraDeniedTitle')}</Text>
+            <Text className="font-body text-center text-sm text-neutral-400">{t('states.cameraDeniedBody')}</Text>
+            <View className="w-full gap-3 pt-2">
+              <Button title={t('states.retry')} onPress={() => requestPermission()} />
+              <Button title={t('common.back')} variant="neutral" onPress={onClose} />
+            </View>
+          </View>
+        ) : null}
+
+        {permission?.granted ? (
+          <View className="absolute inset-0 items-center justify-center">
+            <View
+              className="h-56 w-56 rounded-3xl border-2 border-accent"
+              style={{ boxShadow: '0 0 28px 6px rgba(145,132,217,0.6)' }}
+            />
+            <Text className="font-body mt-4 text-sm text-white">{t('join.cameraHint')}</Text>
+          </View>
+        ) : null}
 
         <Pressable
           onPress={onClose}
@@ -67,14 +82,6 @@ export function QrScanner({ visible, onClose, onScan, onSimulate }: Props) {
           style={{ top: insets.top + 8, left: 16 }}>
           <Icon name="close" size={20} color={colors.foreground} />
         </Pressable>
-
-        <View className="absolute inset-x-0 items-center" style={{ bottom: insets.bottom + 32 }}>
-          <Pressable
-            onPress={onSimulate}
-            className="rounded-full border border-accent bg-black/40 px-5 py-3 active:bg-accent/20">
-            <Text className="font-heading text-sm text-accent">{t('join.simulateScan')}</Text>
-          </Pressable>
-        </View>
       </View>
     </Modal>
   );

@@ -1,15 +1,34 @@
 import '@/global.css';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Text } from 'react-native';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { colorScheme } from 'nativewind';
 import { useFonts, Inter_400Regular, Inter_500Medium } from '@expo-google-fonts/inter';
 import { ToastHost } from '@/components/ToastHost';
 import { DownloadBanner } from '@/components/DownloadBanner';
+import { Screen } from '@/components/Screen';
+import { useThemeColors } from '@/theme/useThemeColors';
+import { useT } from '@/i18n';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function RootLayout() {
+  const colors = useThemeColors();
+  const { t } = useT();
   const [fontsLoaded] = useFonts({ Inter_400Regular, Inter_500Medium });
+
+  // Espera a que zustand cargue AsyncStorage antes de pintar las rutas; si no,
+  // las pantallas leerían el estado inicial (grupos, pasos, eventos) y luego cambiarían.
+  const [hydrated, setHydrated] = useState(() => useAppStore.persist.hasHydrated());
+  useEffect(() => {
+    const unsubscribe = useAppStore.persist.onFinishHydration(() => setHydrated(true));
+    // Por si la hidratación terminó entre el primer render y la suscripción.
+    queueMicrotask(() => {
+      if (useAppStore.persist.hasHydrated()) setHydrated(true);
+    });
+    return unsubscribe;
+  }, []);
 
   // MyMambo es una app oscura por diseño ("Nocturne"): no sigue el tema del
   // sistema ni expone un toggle (no está en el spec).
@@ -17,7 +36,14 @@ export default function RootLayout() {
     colorScheme.set('dark');
   }, []);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !hydrated) {
+    return (
+      <Screen scroll={false} className="flex-1 items-center justify-center gap-3">
+        <ActivityIndicator color={colors.accent} />
+        <Text className="font-body text-sm text-neutral-500">{t('states.loading')}</Text>
+      </Screen>
+    );
+  }
 
   return (
     <ThemeProvider value={DarkTheme}>

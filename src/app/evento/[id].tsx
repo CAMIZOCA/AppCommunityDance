@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import {
+  Button,
   DetailHeader,
   Icon,
   MediaPlaceholder,
@@ -16,9 +17,16 @@ import { useT } from '@/i18n';
 import { useAppStore } from '@/store/useAppStore';
 import { useUiStore } from '@/store/useUiStore';
 import { fmtDuration } from '@/utils/format';
+import { fileNameFromUri } from '@/utils/media';
 import type { Presentation, VideoAsset } from '@/data/events';
 
 type Tab = 'programa' | 'videos' | 'fotos';
+
+// Si no hay historial (p. ej. se abrió un enlace directo), vuelve a la lista de eventos.
+function goBackOrEvents() {
+  if (router.canGoBack()) router.back();
+  else router.replace('/events');
+}
 
 export default function EventoDetailScreen() {
   const colors = useThemeColors();
@@ -45,8 +53,12 @@ export default function EventoDetailScreen() {
 
   if (!event) {
     return (
-      <Screen className="bg-background flex-1">
+      <Screen scroll={false} className="bg-background flex-1">
         <DetailHeader title={t('events.notFound')} />
+        <View className="flex-1 items-center justify-center gap-5 px-8">
+          <Text className="font-body text-center text-sm text-neutral-500">{t('states.notFoundBody')}</Text>
+          <Button title={t('common.back')} variant="neutral" onPress={goBackOrEvents} />
+        </View>
       </Screen>
     );
   }
@@ -55,37 +67,38 @@ export default function EventoDetailScreen() {
     startDownload(label, () => showToast(t('eventDetail.savedToast')));
   }
 
+  // Solo se sube lo que devuelve el picker: si se cancela o falla, no pasa nada.
   async function handlePickVideoFor(presentation: Presentation) {
     setUploadSheetOpen(false);
-    let title = 'Video';
-    let durationSec = 180;
+    let asset: ImagePicker.ImagePickerAsset | undefined;
     try {
       const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['videos'] });
-      if (!result.canceled && result.assets?.[0]) {
-        const asset = result.assets[0];
-        title = asset.fileName ?? 'Video';
-        durationSec = asset.duration ? Math.round(asset.duration / 1000) : 180;
-      } else {
-        title = 'Coreografía';
-      }
+      asset = result.canceled ? undefined : result.assets?.[0];
     } catch {
-      title = 'Coreografía';
+      asset = undefined;
     }
-    uploadVideoToPresentation(event!.id, presentation.id, { title, durationSec });
+    if (!asset) return;
+    uploadVideoToPresentation(event!.id, presentation.id, {
+      title: asset.fileName ?? fileNameFromUri(asset.uri) ?? 'video',
+      durationSec: asset.duration ? Math.round(asset.duration / 1000) : 0,
+      uri: asset.uri,
+    });
     setExpandedPresentation(presentation.id);
     showToast(t('eventDetail.videoUploadedToast', { name: presentation.name }));
   }
 
+  // Solo se suben las fotos reales seleccionadas; cancelar no sube nada.
   async function handlePickPhotos() {
-    let count = 3;
+    let assets: ImagePicker.ImagePickerAsset[] = [];
     try {
       const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsMultipleSelection: true });
-      if (!result.canceled && result.assets?.length) count = result.assets.length;
+      if (!result.canceled && result.assets) assets = result.assets;
     } catch {
-      // usa el fallback de ejemplo
+      assets = [];
     }
-    uploadPhotos(event!.id, count);
-    showToast(t('eventDetail.photosUploadedToast', { n: count }));
+    if (assets.length === 0) return;
+    uploadPhotos(event!.id, assets.map(a => ({ uri: a.uri })));
+    showToast(t('eventDetail.photosUploadedToast', { n: assets.length }));
   }
 
   function togglePhotoSelected(photoId: string) {

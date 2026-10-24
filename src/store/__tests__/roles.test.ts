@@ -76,7 +76,7 @@ describe('control de roles', () => {
       durationSec: 10,
     } as never);
     expect(useAppStore.getState().events).toBe(beforeEvents);
-    expect(useAppStore.getState().uploadPhotos(event.id, 3)).toEqual([]);
+    expect(useAppStore.getState().uploadPhotos(event.id, [{ uri: 'a' }, { uri: 'b' }, { uri: 'c' }])).toEqual([]);
     expect(useAppStore.getState().events).toBe(beforeEvents);
   });
 

@@ -16,6 +16,12 @@ export default function EventsScreen() {
         data={events}
         keyExtractor={item => item.id}
         contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, paddingBottom: TAB_BAR_CLEARANCE, gap: 20 }}
+        ListEmptyComponent={
+          <View className="items-center gap-2 px-6 py-16">
+            <Text className="font-heading text-md text-text">{t('states.emptyEventsTitle')}</Text>
+            <Text className="font-body text-center text-sm text-neutral-500">{t('states.emptyEventsBody')}</Text>
+          </View>
+        }
         renderItem={({ item }) => {
           const videoCount = item.presentations.reduce((acc, p) => acc + p.videos.length, 0);
           return (

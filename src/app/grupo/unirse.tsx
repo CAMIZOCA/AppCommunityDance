@@ -6,13 +6,11 @@ import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
 import { useAppStore } from '@/store/useAppStore';
 import { useUiStore } from '@/store/useUiStore';
-import { CURRENT_STUDENT_ID } from '@/data/people';
 import { MONO_FONT_FAMILY } from '@/theme/mono';
 
 export default function UnirseScreen() {
   const colors = useThemeColors();
   const { t } = useT();
-  const groups = useAppStore(s => s.groups);
   const joinGroupByCode = useAppStore(s => s.joinGroupByCode);
   const showToast = useUiStore(s => s.showToast);
   const [code, setCode] = useState('');
@@ -38,11 +36,6 @@ export default function UnirseScreen() {
   function handleScan(data: string) {
     const match = data.match(/([A-Z0-9]{3,4}-[A-Z0-9]{4})/i);
     attemptJoin(match ? match[1] : data);
-  }
-
-  function handleSimulate() {
-    const candidate = groups.find(g => !g.memberIds.includes(CURRENT_STUDENT_ID));
-    if (candidate) attemptJoin(candidate.code);
   }
 
   return (
@@ -79,16 +72,9 @@ export default function UnirseScreen() {
         </View>
 
         <Button title={t('join.joinButton')} disabled={code.length < 4} onPress={() => attemptJoin(code)} />
-
-        <Text className="font-body text-center text-2xs text-neutral-600">{t('join.testCodeFooter')}</Text>
       </View>
 
-      <QrScanner
-        visible={scannerOpen}
-        onClose={() => setScannerOpen(false)}
-        onScan={handleScan}
-        onSimulate={handleSimulate}
-      />
+      <QrScanner visible={scannerOpen} onClose={() => setScannerOpen(false)} onScan={handleScan} />
     </Screen>
   );
 }

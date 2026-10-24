@@ -10,6 +10,7 @@ import { STYLES, type Style } from '@/data/catalog';
 import type { Level } from '@/data/people';
 import { LEVELS } from '@/data/catalog';
 import { fmtDuration } from '@/utils/format';
+import { fileNameFromUri } from '@/utils/media';
 import { Button, Checkbox, Chip, DetailHeader, FixedBottomBar, MediaPlaceholder, Screen } from '@/components';
 
 type VideoInfo = { name: string; durationSec: number; uri?: string };
@@ -41,24 +42,23 @@ export default function NuevoPasoScreen() {
     setGroupIds(groups.filter(g => g.style === style && g.level === level).map(g => g.id));
   }
 
+  // Solo se guarda el video que devuelve el picker. Si se cancela o falla,
+  // no se toca el estado: sin video real, la validación "Falta video" bloquea.
   async function handlePickVideo() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['videos'],
         videoMaxDuration: 60,
       });
-      if (result.canceled || !result.assets?.[0]) {
-        setVideo({ name: 'video de ejemplo.mp4', durationSec: 20 });
-        return;
-      }
+      if (result.canceled || !result.assets?.[0]) return;
       const asset = result.assets[0];
       setVideo({
-        name: asset.fileName ?? 'video.mp4',
-        durationSec: asset.duration ? Math.round(asset.duration / 1000) : 20,
+        name: asset.fileName ?? fileNameFromUri(asset.uri) ?? 'video',
+        durationSec: asset.duration ? Math.round(asset.duration / 1000) : 0,
         uri: asset.uri,
       });
     } catch {
-      setVideo({ name: 'video de ejemplo.mp4', durationSec: 20 });
+      // Picker fallido: no hay video que mostrar.
     }
   }
 

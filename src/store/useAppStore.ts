@@ -84,8 +84,17 @@ interface AppState {
 
   createEvent: (input: NewEventInput) => string;
   uploadVideoToPresentation: (eventId: string, presentationId: string, video: Omit<VideoAsset, 'id'>) => void;
-  uploadPhotos: (eventId: string, count: number) => PhotoAsset[];
+  uploadPhotos: (eventId: string, photos: { uri: string }[]) => PhotoAsset[];
 }
+
+// Lo que se guarda en AsyncStorage. Las uris de medios pueden caducar (caché
+// del sistema); si eso pasa, el medio dejará de cargarse hasta volver a subirlo.
+type PersistedState = Pick<
+  AppState,
+  'role' | 'language' | 'learnedStepIds' | 'groups' | 'steps' | 'events' | 'newStepsCount'
+>;
+
+const STORE_VERSION = 1;
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -238,13 +247,16 @@ export const useAppStore = create<AppState>()(
         }));
       },
 
-      uploadPhotos: (eventId, count) => {
+      uploadPhotos: (eventId, photos) => {
         if (!isTeacher(get())) return [];
+        if (photos.length === 0) return [];
         const event = get().events.find(e => e.id === eventId);
         const startIndex = event ? event.photos.length : 0;
-        const newPhotos: PhotoAsset[] = Array.from({ length: count }, (_, i) => ({
+        // Solo se guardan las fotos reales que devolvió el picker (una por uri).
+        const newPhotos: PhotoAsset[] = photos.map((p, i) => ({
           id: nextId('foto'),
           index: startIndex + i + 1,
+          uri: p.uri,
         }));
         set(s => ({
           events: s.events.map(e => (e.id === eventId ? { ...e, photos: [...newPhotos, ...e.photos] } : e)),
@@ -255,7 +267,28 @@ export const useAppStore = create<AppState>()(
     {
       name: 'mymambo-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: s => ({ role: s.role, language: s.language, learnedStepIds: s.learnedStepIds }),
+      version: STORE_VERSION,
+      partialize: (s): PersistedState => ({
+        role: s.role,
+        language: s.language,
+        learnedStepIds: s.learnedStepIds,
+        groups: s.groups,
+        steps: s.steps,
+        events: s.events,
+        newStepsCount: s.newStepsCount,
+      }),
+      // v0 solo guardaba role, language y learnedStepIds. Lo que falte se completa
+      // con el estado inicial (persist hace merge superficial con el estado actual).
+      migrate: (persisted, version) => {
+        const state = (persisted ?? {}) as Partial<PersistedState>;
+        if (version < 1) {
+          return {
+            ...state,
+            learnedStepIds: Array.isArray(state.learnedStepIds) ? state.learnedStepIds : [...SOFIA_INITIAL_LEARNED],
+          } as PersistedState;
+        }
+        return state as PersistedState;
+      },
     }
   )
 );

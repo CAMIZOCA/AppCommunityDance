@@ -33,6 +33,12 @@ export default function ProgressScreen() {
           data={rows}
           keyExtractor={item => item.group.id}
           contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, gap: 12, paddingBottom: TAB_BAR_CLEARANCE }}
+          ListEmptyComponent={
+            <View className="items-center gap-2 px-6 py-16">
+              <Text className="font-heading text-md text-text">{t('states.emptyTeacherProgressTitle')}</Text>
+              <Text className="font-body text-center text-sm text-neutral-500">{t('states.emptyTeacherProgressBody')}</Text>
+            </View>
+          }
           renderItem={({ item }) => (
             <Pressable
               className="rounded-card bg-surface px-4 py-4 active:opacity-80"
@@ -68,6 +74,12 @@ export default function ProgressScreen() {
         data={cards}
         keyExtractor={item => item.group.id}
         contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, gap: 12 }}
+        ListEmptyComponent={
+          <View className="items-center gap-2 px-6 py-16">
+            <Text className="font-heading text-md text-text">{t('states.emptyStudentProgressTitle')}</Text>
+            <Text className="font-body text-center text-sm text-neutral-500">{t('states.emptyStudentProgressBody')}</Text>
+          </View>
+        }
         renderItem={({ item }) => {
           const percent = item.total ? Math.round((item.learnedCount / item.total) * 100) : 0;
           return (
@@ -88,7 +100,7 @@ export default function ProgressScreen() {
             </Pressable>
           );
         }}
-        ListFooterComponent={
+        ListFooterComponent={cards.length === 0 ? null : (
           <View className="mt-2 gap-3">
             <Text className="font-heading text-2xs tracking-widest text-neutral-500 uppercase">
               {t('progressTab.toReview')}
@@ -116,7 +128,7 @@ export default function ProgressScreen() {
               </View>
             )}
           </View>
-        }
+        )}
         ListFooterComponentStyle={{ paddingHorizontal: 20, paddingBottom: TAB_BAR_CLEARANCE }}
       />
     </Screen>
