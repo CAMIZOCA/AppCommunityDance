@@ -36,8 +36,9 @@ export function InviteSheet({ visible, onClose, groupId }: Props) {
   }
 
   function handleRenew() {
-    renewInviteCode(group!.id);
-    showToast(t('invite.renewedToast'));
+    // El store devuelve '' si el rol no puede renovar; en ese caso no hay aviso.
+    const newCode = renewInviteCode(group!.id);
+    if (newCode) showToast(t('invite.renewedToast'));
   }
 
   return (

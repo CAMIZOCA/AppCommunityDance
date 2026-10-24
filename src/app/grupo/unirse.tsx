@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { Button, DetailHeader, Icon, QrScanner, Screen } from '@/components';
 import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
@@ -16,6 +16,10 @@ export default function UnirseScreen() {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [scannerOpen, setScannerOpen] = useState(false);
+  const role = useAppStore(s => s.role);
+
+  // Solo el alumno se une a grupos con código; el profe crea y gestiona desde su vista.
+  if (role === 'profe') return <Redirect href="/" />;
 
   function attemptJoin(rawCode: string) {
     const result = joinGroupByCode(rawCode);

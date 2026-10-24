@@ -22,7 +22,8 @@ export default function GrupoDetailScreen() {
   const learnedStepIds = useAppStore(s => s.learnedStepIds);
   const markGroupSeen = useAppStore(s => s.markGroupSeen);
   const [tab, setTab] = useState<Tab>(initialTab === 'progreso' ? 'progreso' : 'pasos');
-  const [inviteOpen, setInviteOpen] = useState(openInvite === '1');
+  // Solo el profe puede abrir la invitación, aunque llegue con ?openInvite=1.
+  const [inviteOpen, setInviteOpen] = useState(openInvite === '1' && role === 'profe');
 
   useEffect(() => {
     if (id) markGroupSeen(id);
@@ -178,7 +179,9 @@ export default function GrupoDetailScreen() {
         )}
       </ScrollView>
 
-      <InviteSheet visible={inviteOpen} onClose={() => setInviteOpen(false)} groupId={group.id} />
+      {role === 'profe' ? (
+        <InviteSheet visible={inviteOpen} onClose={() => setInviteOpen(false)} groupId={group.id} />
+      ) : null}
     </Screen>
   );
 }
