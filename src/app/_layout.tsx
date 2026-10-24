@@ -1,8 +1,7 @@
 import '@/global.css';
 
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text } from 'react-native';
-import { useColorScheme } from 'react-native';
+import { ActivityIndicator, Text, useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Inter_400Regular, Inter_500Medium } from '@expo-google-fonts/inter';
