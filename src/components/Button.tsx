@@ -1,9 +1,12 @@
 import { Pressable, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { usePressScale } from './usePressScale';
 
 type Variant = 'primary' | 'tinted' | 'neutral';
 
 // Botones primarios van con contorno (nunca relleno sólido): borde accent,
 // fondo transparente, y al presionar se tiñen con el acento al 12%.
+// El press también escala a 0.97 (ver usePressScale).
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary: 'border border-accent bg-transparent active:bg-accent/12',
   tinted: 'border border-accent bg-accent/14 active:bg-accent/24',
@@ -27,13 +30,19 @@ type Props = {
 };
 
 export function Button({ title, onPress, variant = 'primary', disabled = false, dimmed = false }: Props) {
+  const { animatedStyle, onPressIn, onPressOut } = usePressScale();
+
   return (
-    <Pressable
-      onPress={disabled ? undefined : onPress}
-      className={`min-h-[44px] items-center justify-center rounded-button px-5 py-3.5 active:scale-[0.97] ${
-        VARIANT_CLASSES[variant]
-      } ${disabled || dimmed ? 'opacity-40' : ''}`}>
-      <Text className={`text-base font-heading ${TEXT_CLASSES[variant]}`}>{title}</Text>
-    </Pressable>
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        onPress={disabled ? undefined : onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        className={`min-h-[44px] items-center justify-center rounded-button px-5 py-3.5 ${
+          VARIANT_CLASSES[variant]
+        } ${disabled || dimmed ? 'opacity-40' : ''}`}>
+        <Text className={`text-base font-heading ${TEXT_CLASSES[variant]}`}>{title}</Text>
+      </Pressable>
+    </Animated.View>
   );
 }

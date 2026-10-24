@@ -1,19 +1,31 @@
 import { Text, View } from 'react-native';
+import Animated, { FadeInUp, FadeOutUp, ReduceMotion, useReducedMotion, FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiStore } from '@/store/useUiStore';
 
 export function DownloadBanner() {
   const { visible, label, percent } = useUiStore(s => s.download);
   const insets = useSafeAreaInsets();
+  const reduced = useReducedMotion();
 
   if (!visible) return null;
 
+  // Con reducir movimiento solo hay fundido. zIndex 90 queda por debajo de
+  // ToastHost (100); el toast se desplaza bajo esta barra mientras descarga.
+  const entering = reduced
+    ? FadeIn.duration(150).reduceMotion(ReduceMotion.System)
+    : FadeInUp.duration(220).reduceMotion(ReduceMotion.System);
+  const exiting = reduced
+    ? FadeOut.duration(150).reduceMotion(ReduceMotion.System)
+    : FadeOutUp.duration(200).reduceMotion(ReduceMotion.System);
+
   return (
-    <View
+    <Animated.View
       pointerEvents="none"
+      entering={entering}
+      exiting={exiting}
       style={{ position: 'absolute', top: insets.top + 8, left: 16, right: 16, zIndex: 90 }}
-      className="gap-2 rounded-2xl border border-divider bg-surface px-4 py-3"
-    >
+      className="gap-2 rounded-2xl border border-divider bg-surface px-4 py-3">
       <View className="flex-row items-baseline justify-between">
         <Text className="font-body flex-1 text-xs text-neutral-300" numberOfLines={1}>
           {label}
@@ -26,6 +38,6 @@ export function DownloadBanner() {
           style={{ width: `${percent}%`, boxShadow: '0 0 10px 1px rgba(145,132,217,0.7)' }}
         />
       </View>
-    </View>
+    </Animated.View>
   );
 }

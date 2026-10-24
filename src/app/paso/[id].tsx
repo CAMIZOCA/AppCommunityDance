@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Button, CountGrid, DetailHeader, Icon, MediaPlaceholder, Screen, SegmentedControlNative } from '@/components';
@@ -43,21 +43,23 @@ export default function PasoDetailScreen() {
   const [loop, setLoop] = useState(false);
   const [countOn, setCountOn] = useState(true);
   const [beatIndex, setBeatIndex] = useState(0); // 0..TOTAL_BEATS-1
+  const beatRef = useRef(0); // espejo del beat para el intervalo (sin depender del updater)
 
+  // Avanza un beat por tick. El beat actual vive en beatRef para decidir el
+  // final sin meter efectos secundarios dentro del updater de setBeatIndex.
   useEffect(() => {
     if (!playing) return;
     const interval = setInterval(() => {
-      setBeatIndex(prev => {
-        const next = prev + 1;
-        if (next >= TOTAL_BEATS) {
-          if (loop) return 0;
-          setPlaying(false);
-          return TOTAL_BEATS - 1;
-        }
-        return next;
-      });
+      const prev = beatRef.current;
+      if (prev + 1 >= TOTAL_BEATS && !loop) {
+        setPlaying(false); // fin sin loop: se queda en el último beat
+        return;
+      }
+      const next = prev + 1 >= TOTAL_BEATS ? 0 : prev + 1;
+      beatRef.current = next;
+      setBeatIndex(next);
     }, BEAT_MS / speed);
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // se limpia al pausar, cambiar velocidad o desmontar
   }, [playing, speed, loop]);
 
   const myGroupIds = groups.filter(g => g.memberIds.includes(CURRENT_STUDENT_ID)).map(g => g.id);
