@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
@@ -20,6 +20,7 @@ export default function NuevoPasoScreen() {
   const params = useLocalSearchParams<{ groupId?: string; style?: string; level?: string }>();
   const groups = useAppStore(s => s.groups);
   const publishStep = useAppStore(s => s.publishStep);
+  const role = useAppStore(s => s.role);
   const showToast = useUiStore(s => s.showToast);
 
   const [style, setStyle] = useState<Style>((params.style as Style) ?? 'salsa');
@@ -89,6 +90,9 @@ export default function NuevoPasoScreen() {
       router.replace('/gallery');
     }
   }
+
+  // Redirect después de todos los hooks.
+  if (role !== 'profe') return <Redirect href="/" />;
 
   return (
     <Screen scroll={false} className="bg-background flex-1">

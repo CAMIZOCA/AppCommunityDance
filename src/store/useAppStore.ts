@@ -12,6 +12,12 @@ import type { Style } from '@/data/catalog';
 export type Role = 'alumno' | 'profe';
 export type Lang = 'es' | 'en';
 
+// Control de roles SOLO en cliente: oculta UI y bloquea acciones del store,
+// pero no es seguridad real. Sin backend, cualquiera puede cambiar el rol.
+export function isTeacher(state: { role: Role }): boolean {
+  return state.role === 'profe';
+}
+
 export interface StoreStep extends Step {
   groupIds: string[];
 }
@@ -122,6 +128,7 @@ export const useAppStore = create<AppState>()(
       },
 
       renewInviteCode: groupId => {
+        if (!isTeacher(get())) return '';
         const group = get().groups.find(g => g.id === groupId);
         const newCode = makeInviteCode(group?.style ?? 'salsa', group?.level ?? 'principiante');
         set(s => ({ groups: s.groups.map(g => (g.id === groupId ? { ...g, code: newCode } : g)) }));
@@ -129,6 +136,7 @@ export const useAppStore = create<AppState>()(
       },
 
       createGroup: input => {
+        if (!isTeacher(get())) return '';
         const id = nextId('grupo');
         const group: Group = {
           id,
@@ -144,6 +152,7 @@ export const useAppStore = create<AppState>()(
       },
 
       updateGroup: (groupId, input) => {
+        if (!isTeacher(get())) return;
         set(s => ({
           groups: s.groups.map(g =>
             g.id === groupId
@@ -161,6 +170,7 @@ export const useAppStore = create<AppState>()(
       },
 
       publishStep: input => {
+        if (!isTeacher(get())) return '';
         const id = nextId('paso');
         const step: StoreStep = {
           id,
@@ -183,6 +193,7 @@ export const useAppStore = create<AppState>()(
       },
 
       createEvent: input => {
+        if (!isTeacher(get())) return '';
         const id = nextId('evento');
         let hour = 17;
         let minute = 0;
@@ -211,6 +222,7 @@ export const useAppStore = create<AppState>()(
       },
 
       uploadVideoToPresentation: (eventId, presentationId, video) => {
+        if (!isTeacher(get())) return;
         const vid: VideoAsset = { id: nextId('video'), ...video };
         set(s => ({
           events: s.events.map(e =>
@@ -227,6 +239,7 @@ export const useAppStore = create<AppState>()(
       },
 
       uploadPhotos: (eventId, count) => {
+        if (!isTeacher(get())) return [];
         const event = get().events.find(e => e.id === eventId);
         const startIndex = event ? event.photos.length : 0;
         const newPhotos: PhotoAsset[] = Array.from({ length: count }, (_, i) => ({

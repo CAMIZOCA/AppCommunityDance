@@ -76,7 +76,9 @@ export default function PasoDetailScreen() {
     return list[(idx + 1) % list.length];
   }, [step, steps, from, role, myGroupIds]);
 
-  if (!step) {
+  // El alumno solo ve pasos de sus grupos; el profe ve todos.
+  const canView = role === 'profe' || (!!step && step.groupIds.some(gid => myGroupIds.includes(gid)));
+  if (!step || !canView) {
     return (
       <Screen className="bg-background flex-1">
         <DetailHeader title={t('stepPlayer.notFound')} />

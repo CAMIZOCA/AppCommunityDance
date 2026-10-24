@@ -32,7 +32,9 @@ export default function GrupoDetailScreen() {
     [group, steps]
   );
 
-  if (!group) {
+  // El alumno solo ve grupos de los que es miembro; el profe ve todos.
+  const canView = role === 'profe' || (!!group && group.memberIds.includes(CURRENT_STUDENT_ID));
+  if (!group || !canView) {
     return (
       <Screen className="bg-background flex-1">
         <DetailHeader title={t('groupDetail.notFound')} />

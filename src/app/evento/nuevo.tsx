@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { Button, Chip, DetailHeader, FixedBottomBar, Icon, Screen } from '@/components';
 import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
@@ -20,6 +20,7 @@ export default function NuevoEventoScreen() {
   const { t } = useT();
   const groups = useAppStore(s => s.groups);
   const createEvent = useAppStore(s => s.createEvent);
+  const role = useAppStore(s => s.role);
   const showToast = useUiStore(s => s.showToast);
 
   const [name, setName] = useState('');
@@ -68,6 +69,9 @@ export default function NuevoEventoScreen() {
     const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
     return { name: name_, time };
   });
+
+  // Redirect después de todos los hooks.
+  if (role !== 'profe') return <Redirect href="/" />;
 
   return (
     <Screen scroll={false} className="bg-background flex-1">
