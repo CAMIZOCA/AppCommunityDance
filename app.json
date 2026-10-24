@@ -9,16 +9,32 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.camizoca.miapp"
+      "bundleIdentifier": "com.camizoca.miapp",
+      "associatedDomains": ["applinks:mymambo.app"]
     },
     "android": {
+      "package": "com.camizoca.miapp",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "mymambo.app",
+              "pathPrefix": "/unirse"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "output": "static",
@@ -32,6 +48,19 @@
           "backgroundColor": "#208AEF",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Mi Mambo necesita acceso a la cámara para escanear códigos QR de invitación a grupos."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Mi Mambo necesita acceso a tus fotos para subir fotos y videos a tus eventos y pasos.",
+          "cameraPermission": "Mi Mambo necesita acceso a la cámara para tomar fotos y subirlas a tus eventos y pasos."
         }
       ]
     ],
