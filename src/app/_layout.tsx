@@ -2,9 +2,9 @@ import '@/global.css';
 
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text } from 'react-native';
-import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { useColorScheme } from 'react-native';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { colorScheme } from 'nativewind';
 import { useFonts, Inter_400Regular, Inter_500Medium } from '@expo-google-fonts/inter';
 import { ToastHost } from '@/components/ToastHost';
 import { DownloadBanner } from '@/components/DownloadBanner';
@@ -16,6 +16,8 @@ import { useAppStore } from '@/store/useAppStore';
 export default function RootLayout() {
   const colors = useThemeColors();
   const { t } = useT();
+  // El tema sigue al sistema (claro u oscuro). NativeWind también sigue al sistema por defecto.
+  const systemScheme = useColorScheme();
   const [fontsLoaded] = useFonts({ Inter_400Regular, Inter_500Medium });
 
   // Espera a que zustand cargue AsyncStorage antes de pintar las rutas; si no,
@@ -30,12 +32,6 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  // MyMambo es una app oscura por diseño ("Nocturne"): no sigue el tema del
-  // sistema ni expone un toggle (no está en el spec).
-  useEffect(() => {
-    colorScheme.set('dark');
-  }, []);
-
   if (!fontsLoaded || !hydrated) {
     return (
       <Screen scroll={false} className="flex-1 items-center justify-center gap-3">
@@ -46,13 +42,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={DarkTheme}>
+    <ThemeProvider value={systemScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
       </Stack>
       <ToastHost />
       <DownloadBanner />
-      <StatusBar style="light" />
+      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
