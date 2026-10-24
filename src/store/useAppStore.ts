@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PEOPLE, CURRENT_STUDENT_ID, Person } from '@/data/people';
 import { SEED_GROUPS, INITIAL_NEW_STEPS, Group } from '@/data/groups';
 import { SEED_STEPS, SOFIA_INITIAL_LEARNED, groupIdsForStep, Step } from '@/data/steps';
-import { SEED_EVENTS, EventItem, VideoAsset, PhotoAsset } from '@/data/events';
+import { SEED_EVENTS, EventItem, VideoAsset, PhotoAsset, slotTime } from '@/data/events';
 import { makeInviteCode } from '@/data/catalog';
 import type { Level } from '@/data/people';
 import type { Style } from '@/data/catalog';
@@ -53,7 +53,7 @@ interface NewEventInput {
   venue: string;
   dateLabel: string;
   day: string;
-  month: string;
+  month: number | null;
   presentationNames: string[];
 }
 
@@ -187,7 +187,9 @@ export const useAppStore = create<AppState>()(
           style: input.style,
           level: input.level,
           durationSec: input.durationSec ?? 20,
-          notes: { es: input.notes, en: input.notes },
+          // La nota se guarda en el idioma activo; el otro queda vacío y la pantalla
+          // del paso usa el idioma activo y, si falta, el otro.
+          notes: get().language === 'en' ? { es: '', en: input.notes } : { es: input.notes, en: '' },
           videoUri: input.videoUri,
           groupIds: input.groupIds,
         };
@@ -204,17 +206,12 @@ export const useAppStore = create<AppState>()(
       createEvent: input => {
         if (!isTeacher(get())) return '';
         const id = nextId('evento');
-        let hour = 17;
-        let minute = 0;
-        const presentations = input.presentationNames.map((name, i) => {
-          const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-          minute += 15;
-          if (minute >= 60) {
-            minute -= 60;
-            hour += 1;
-          }
-          return { id: `${id}-p${i + 1}`, time, name, videos: [] };
-        });
+        const presentations = input.presentationNames.map((name, i) => ({
+          id: `${id}-p${i + 1}`,
+          time: slotTime(i),
+          name,
+          videos: [],
+        }));
         const event: EventItem = {
           id,
           name: input.name,

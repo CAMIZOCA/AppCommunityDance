@@ -53,7 +53,7 @@ export default function NuevoPasoScreen() {
       if (result.canceled || !result.assets?.[0]) return;
       const asset = result.assets[0];
       setVideo({
-        name: asset.fileName ?? fileNameFromUri(asset.uri) ?? 'video',
+        name: asset.fileName ?? fileNameFromUri(asset.uri) ?? t('eventDetail.defaultVideoTitle'),
         durationSec: asset.duration ? Math.round(asset.duration / 1000) : 0,
         uri: asset.uri,
       });

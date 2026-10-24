@@ -32,6 +32,12 @@ export function countsFor(lang: Lang, style: string): string[] {
   return Array.isArray(raw) ? (raw as string[]) : [];
 }
 
+/** Lista traducida (p. ej. monthsShort, candidateNames). Vacía si la clave no es una lista. */
+export function listFor(lang: Lang, key: string): string[] {
+  const raw = getPath(DICTS[lang], key);
+  return Array.isArray(raw) ? (raw as string[]) : [];
+}
+
 /** Hook: t() ligado al idioma actual del store, se re-renderiza al cambiarlo. */
 export function useT() {
   const lang = useAppStore(s => s.language);
@@ -39,5 +45,6 @@ export function useT() {
     lang,
     t: (key: string, vars?: Record<string, string | number>) => translate(lang, key, vars),
     counts: (style: string) => countsFor(lang, style),
+    list: (key: string) => listFor(lang, key),
   };
 }

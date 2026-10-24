@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Avatar, DetailHeader, Icon, IconButton, InviteSheet, MediaPlaceholder, ProgressBarGlow, Screen } from '@/components';
+import { Avatar, Button, DetailHeader, Icon, IconButton, InviteSheet, MediaPlaceholder, ProgressBarGlow, Screen } from '@/components';
+import { goBackOr } from '@/utils/navigation';
 import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
 import { useAppStore } from '@/store/useAppStore';
@@ -13,7 +14,7 @@ type Tab = 'pasos' | 'progreso';
 
 export default function GrupoDetailScreen() {
   const colors = useThemeColors();
-  const { t } = useT();
+  const { t, counts } = useT();
   const { id, openInvite, tab: initialTab } = useLocalSearchParams<{ id: string; openInvite?: string; tab?: Tab }>();
   const role = useAppStore(s => s.role);
   const group = useAppStore(s => s.groups.find(g => g.id === id));
@@ -36,8 +37,12 @@ export default function GrupoDetailScreen() {
   const canView = role === 'profe' || (!!group && group.memberIds.includes(CURRENT_STUDENT_ID));
   if (!group || !canView) {
     return (
-      <Screen className="bg-background flex-1">
+      <Screen scroll={false} className="bg-background flex-1">
         <DetailHeader title={t('groupDetail.notFound')} />
+        <View className="flex-1 items-center justify-center gap-5 px-8">
+          <Text className="font-body text-center text-sm text-neutral-500">{t('states.notFoundBody')}</Text>
+          <Button title={t('common.back')} variant="neutral" onPress={() => goBackOr('/')} />
+        </View>
       </Screen>
     );
   }
@@ -134,7 +139,7 @@ export default function GrupoDetailScreen() {
                           {step.name}
                         </Text>
                         <Text className="font-body text-2xs text-neutral-500">
-                          {step.combo ? `Combo ${step.combo} · ` : ''}8 tiempos · {fmtDuration(step.durationSec)}
+                          {step.combo ? t('groupDetail.combo', { n: step.combo }) : ''}{t('groupDetail.beats', { n: counts(step.style).length })} · {fmtDuration(step.durationSec)}
                         </Text>
                       </View>
                       {role === 'alumno' ? (

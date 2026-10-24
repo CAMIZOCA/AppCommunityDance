@@ -54,6 +54,8 @@ const es = {
     learned: 'Aprendido',
     pending: 'Pendiente',
     groupAvgProgress: 'Progreso del grupo · {{pct}}% promedio',
+    combo: 'Combo {{n}} · ',
+    beats: '{{n}} tiempos',
   },
   progressTab: {
     title: 'Progreso',
@@ -97,6 +99,7 @@ const es = {
     invalidCode: 'Código no válido',
     alreadyMember: 'Ya sos parte de este grupo',
     joinedToast: 'Te uniste · {{name}}',
+    teacherOnly: 'Esta invitación es para alumnos. Cambiá a modo alumno para unirte.',
   },
   groupForm: {
     newTitle: 'Nuevo grupo',
@@ -127,6 +130,12 @@ const es = {
     nextStep: 'Siguiente paso',
     notFound: 'No se encontró este paso.',
   },
+  danceStyles: {
+    kpop: 'K-pop',
+    tropical: 'Tropical',
+    bachata: 'Bachata',
+  },
+  monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
   newStep: {
     title: 'Nuevo paso',
     videoZoneEmpty: 'Seleccionar video · MP4 o MOV · hasta 60 s',
@@ -144,6 +153,7 @@ const es = {
     title: 'Galería',
     all: 'Todos',
     empty: 'No hay pasos con este filtro.',
+    videoDuration: 'video · {{dur}}',
     learnedBadge: '✓ Aprendido',
     fabNew: 'Nuevo paso',
   },
@@ -177,6 +187,7 @@ const es = {
     downloadingPhotos: 'Descargando {{n}} fotos',
     savedToast: 'Guardado en tu dispositivo',
     photoLabel: 'foto {{n}}',
+    defaultVideoTitle: 'Video',
   },
   newEvent: {
     title: 'Nuevo evento',
@@ -187,6 +198,7 @@ const es = {
     dateLabel: 'Fecha y hora',
     datePlaceholder: 'Ej. Sáb 24 oct · 17:00',
     presentationsLabel: 'Presentaciones',
+    candidateNames: ['Kids MyMambo', 'Bachata Lady', 'Elenco Bachata', 'Elenco Salsa'],
     otherGroupPlaceholder: 'Otro grupo o coreografía',
     add: 'Agregar',
     presentationsCount: '{{n}} presentaciones',

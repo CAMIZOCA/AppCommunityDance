@@ -6,18 +6,13 @@ import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
 import { useAppStore } from '@/store/useAppStore';
 import { useUiStore } from '@/store/useUiStore';
-
-const CANDIDATE_NAMES = ['Kids MyMambo', 'Bachata Lady', 'Elenco Bachata', 'Elenco Salsa'];
-
-function parseDayMonth(dateLabel: string): { day: string; month: string } {
-  const match = dateLabel.match(/(\d{1,2})\s*(?:de\s*)?([a-zA-Z]{3})/);
-  if (!match) return { day: '--', month: '---' };
-  return { day: match[1].padStart(2, '0'), month: match[2].toUpperCase() };
-}
+import { slotTime } from '@/data/events';
+import { parseEventDate } from '@/utils/eventDate';
 
 export default function NuevoEventoScreen() {
   const colors = useThemeColors();
-  const { t } = useT();
+  const { t, list } = useT();
+  const CANDIDATE_NAMES = list('newEvent.candidateNames');
   const groups = useAppStore(s => s.groups);
   const createEvent = useAppStore(s => s.createEvent);
   const role = useAppStore(s => s.role);
@@ -56,19 +51,14 @@ export default function NuevoEventoScreen() {
       return;
     }
     setError(null);
-    const { day, month } = parseDayMonth(dateLabel);
+    const { day, month } = parseEventDate(dateLabel);
     const id = createEvent({ name: name.trim(), venue: venue.trim(), dateLabel: dateLabel.trim(), day, month, presentationNames: selectedNames });
     showToast(t('newEvent.createdToast'));
     router.replace({ pathname: '/evento/[id]', params: { id } });
   }
 
-  const scheduleRows = selectedNames.map((name_, i) => {
-    const totalMinutes = i * 15;
-    const hour = 17 + Math.floor(totalMinutes / 60);
-    const minute = totalMinutes % 60;
-    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-    return { name: name_, time };
-  });
+  // Horario de cada presentación: mismo cálculo que el store (ver slotTime en data/events).
+  const scheduleRows = selectedNames.map((name_, i) => ({ name: name_, time: slotTime(i) }));
 
   // Redirect después de todos los hooks.
   if (role !== 'profe') return <Redirect href="/" />;

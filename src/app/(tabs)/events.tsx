@@ -6,7 +6,8 @@ import { useT } from '@/i18n';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function EventsScreen() {
-  const { t } = useT();
+  const { t, list } = useT();
+  const monthsShort = list('monthsShort');
   const role = useAppStore(s => s.role);
   const events = useAppStore(s => s.events);
 
@@ -33,7 +34,7 @@ export default function EventsScreen() {
 
                 <View className="absolute left-3 top-3 h-16 w-14 items-center justify-center rounded-md bg-background/80">
                   <Text className="font-heading text-5.5 leading-tight text-text">{item.day}</Text>
-                  <Text className="font-heading text-2xs tracking-widest text-accent">{item.month}</Text>
+                  <Text className="font-heading text-2xs uppercase tracking-widest text-accent">{item.month === null ? '---' : monthsShort[item.month]}</Text>
                 </View>
 
                 {!item.isPast ? (

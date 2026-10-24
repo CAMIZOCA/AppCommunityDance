@@ -56,10 +56,12 @@ const en: Dictionary = {
     learned: 'Learned',
     pending: 'Pending',
     groupAvgProgress: 'Group progress · {{pct}}% average',
+    combo: 'Combo {{n}} · ',
+    beats: '{{n}} beats',
   },
   progressTab: {
     title: 'Progress',
-    toReview: 'TO REVIEW',
+    toReview: 'To review',
     allReviewed: "All reviewed. Great work.",
     average: 'average',
   },
@@ -99,6 +101,7 @@ const en: Dictionary = {
     invalidCode: 'Invalid code',
     alreadyMember: "You're already part of this group",
     joinedToast: 'You joined · {{name}}',
+    teacherOnly: 'This invite is for students. Switch to student mode to join.',
   },
   groupForm: {
     newTitle: 'New group',
@@ -129,6 +132,12 @@ const en: Dictionary = {
     nextStep: 'Next step',
     notFound: 'This step could not be found.',
   },
+  danceStyles: {
+    kpop: 'K-pop',
+    tropical: 'Tropical',
+    bachata: 'Bachata',
+  },
+  monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   newStep: {
     title: 'New step',
     videoZoneEmpty: 'Select video · MP4 or MOV · up to 60 s',
@@ -146,6 +155,7 @@ const en: Dictionary = {
     title: 'Gallery',
     all: 'All',
     empty: 'No steps match this filter.',
+    videoDuration: 'video · {{dur}}',
     learnedBadge: '✓ Learned',
     fabNew: 'New step',
   },
@@ -179,6 +189,7 @@ const en: Dictionary = {
     downloadingPhotos: 'Downloading {{n}} photos',
     savedToast: 'Saved to your device',
     photoLabel: 'photo {{n}}',
+    defaultVideoTitle: 'Video',
   },
   newEvent: {
     title: 'New event',
@@ -189,6 +200,7 @@ const en: Dictionary = {
     dateLabel: 'Date and time',
     datePlaceholder: 'E.g. Sat Oct 24 · 5:00 PM',
     presentationsLabel: 'Performances',
+    candidateNames: ['Kids MyMambo', 'Bachata Lady', 'Company Bachata', 'Company Salsa'],
     otherGroupPlaceholder: 'Other group or choreography',
     add: 'Add',
     presentationsCount: '{{n}} performances',

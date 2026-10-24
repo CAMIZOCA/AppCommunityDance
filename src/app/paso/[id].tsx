@@ -8,18 +8,29 @@ import { useAppStore } from '@/store/useAppStore';
 import { useUiStore } from '@/store/useUiStore';
 import { CURRENT_STUDENT_ID } from '@/data/people';
 import { fmtDuration } from '@/utils/format';
+import { goBackOr } from '@/utils/navigation';
 
 const TOTAL_BEATS = 32;
 const BEAT_MS = 430;
 
+// Pares de lados para el espejo, en ambos idiomas. Se cambia token a token (una
+// sola pasada), así un lado nunca se reemplaza dos veces.
+const SIDE_SWAP: Record<string, string> = {
+  'Izq.': 'Der.',
+  'Der.': 'Izq.',
+  Izq: 'Der',
+  Der: 'Izq',
+  L: 'R',
+  R: 'L',
+  Left: 'Right',
+  Right: 'Left',
+};
+
+// Solo cambia un lado cuando es una palabra completa (no "Lado" ni "Close").
+const SIDE_TOKEN = /(?<![\p{L}\p{N}])(Izq\.|Der\.|Izq|Der|Left|Right|L|R)(?![\p{L}\p{N}])/gu;
+
 function mirrorLabel(label: string): string {
-  return label
-    .replace(/\bIzq\./g, '\u0000')
-    .replace(/\bDer\./g, 'Izq.')
-    .replace(/\u0000/g, 'Der.')
-    .replace(/^L (?=\w)/, '\u0000')
-    .replace(/^R (?=\w)/, 'L ')
-    .replace(/\u0000/, 'R ');
+  return label.replace(SIDE_TOKEN, token => SIDE_SWAP[token] ?? token);
 }
 
 type Speed = 0.5 | 0.75 | 1;
@@ -82,8 +93,12 @@ export default function PasoDetailScreen() {
   const canView = role === 'profe' || (!!step && step.groupIds.some(gid => myGroupIds.includes(gid)));
   if (!step || !canView) {
     return (
-      <Screen className="bg-background flex-1">
+      <Screen scroll={false} className="bg-background flex-1">
         <DetailHeader title={t('stepPlayer.notFound')} />
+        <View className="flex-1 items-center justify-center gap-5 px-8">
+          <Text className="font-body text-center text-sm text-neutral-500">{t('states.notFoundBody')}</Text>
+          <Button title={t('common.back')} variant="neutral" onPress={() => goBackOr('/')} />
+        </View>
       </Screen>
     );
   }
@@ -197,7 +212,7 @@ export default function PasoDetailScreen() {
 
           <Text className="font-heading text-4xl text-text">{step.name}</Text>
           <Text className="font-body text-sm leading-5 text-neutral-300">
-            {step.notes[lang]}
+            {step.notes[lang] || step.notes[lang === 'es' ? 'en' : 'es']}
           </Text>
 
           {role === 'alumno' ? (

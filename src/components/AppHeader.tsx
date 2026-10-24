@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useAppStore, Role } from '@/store/useAppStore';
+import { CURRENT_STUDENT_ID, TEACHER_ID, personById } from '@/data/people';
 import { useT } from '@/i18n';
 import { useThemeColors } from '@/theme/useThemeColors';
 import { Icon } from './Icon';
@@ -22,7 +23,8 @@ export function AppHeader({ title }: Props) {
     router.navigate('/');
   }
 
-  const greetingName = role === 'alumno' ? 'Sofía' : 'Profe Daniela';
+  const person = personById(role === 'alumno' ? CURRENT_STUDENT_ID : TEACHER_ID);
+  const greetingName = person?.shortName ?? person?.name ?? '';
   const greetingKey = role === 'alumno' ? 'header.greetingStudent' : 'header.greetingTeacher';
 
   return (

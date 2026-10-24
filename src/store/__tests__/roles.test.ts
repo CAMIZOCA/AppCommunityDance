@@ -24,7 +24,7 @@ const eventInput = {
   venue: 'Sala',
   dateLabel: '12 de mayo',
   day: '12',
-  month: 'MAY',
+  month: 4,
   presentationNames: ['Grupo A'],
 };
 

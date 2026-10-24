@@ -29,7 +29,7 @@ export function UploadPickSheet({ visible, onClose, presentations, onPick }: Pro
             <Text className="font-body w-14 text-xs text-accentScale-300">{p.time}</Text>
             <Text className="font-body flex-1 text-sm text-text">
               {p.name}
-              {p.style ? ` · ${p.style}` : ''}
+              {p.style ? ` · ${t(`danceStyles.${p.style}`)}` : ''}
             </Text>
             <Icon name="chevronRight" size={14} color={colors.neutral[700]} />
           </Pressable>

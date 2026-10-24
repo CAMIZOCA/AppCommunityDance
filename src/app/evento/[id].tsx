@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import {
   Button,
@@ -18,15 +18,10 @@ import { useAppStore } from '@/store/useAppStore';
 import { useUiStore } from '@/store/useUiStore';
 import { fmtDuration } from '@/utils/format';
 import { fileNameFromUri } from '@/utils/media';
+import { goBackOr } from '@/utils/navigation';
 import type { Presentation, VideoAsset } from '@/data/events';
 
 type Tab = 'programa' | 'videos' | 'fotos';
-
-// Si no hay historial (p. ej. se abrió un enlace directo), vuelve a la lista de eventos.
-function goBackOrEvents() {
-  if (router.canGoBack()) router.back();
-  else router.replace('/events');
-}
 
 export default function EventoDetailScreen() {
   const colors = useThemeColors();
@@ -38,6 +33,14 @@ export default function EventoDetailScreen() {
   const uploadPhotos = useAppStore(s => s.uploadPhotos);
   const showToast = useUiStore(s => s.showToast);
   const startDownload = useUiStore(s => s.startDownload);
+
+  // Si el usuario sale de la pantalla con una descarga en curso, la cancelamos:
+  // así no aparece el banner ni el aviso "Guardado" de una pantalla que ya no está.
+  useEffect(() => {
+    return () => {
+      if (useUiStore.getState().download.visible) useUiStore.getState().cancelDownload();
+    };
+  }, []);
 
   const [tab, setTab] = useState<Tab>(event?.isPast ? 'fotos' : 'programa');
   const [expandedPresentation, setExpandedPresentation] = useState<string | null>(null);
@@ -57,7 +60,7 @@ export default function EventoDetailScreen() {
         <DetailHeader title={t('events.notFound')} />
         <View className="flex-1 items-center justify-center gap-5 px-8">
           <Text className="font-body text-center text-sm text-neutral-500">{t('states.notFoundBody')}</Text>
-          <Button title={t('common.back')} variant="neutral" onPress={goBackOrEvents} />
+          <Button title={t('common.back')} variant="neutral" onPress={() => goBackOr('/events')} />
         </View>
       </Screen>
     );
@@ -79,7 +82,7 @@ export default function EventoDetailScreen() {
     }
     if (!asset) return;
     uploadVideoToPresentation(event!.id, presentation.id, {
-      title: asset.fileName ?? fileNameFromUri(asset.uri) ?? 'video',
+      title: asset.fileName ?? fileNameFromUri(asset.uri) ?? t('eventDetail.defaultVideoTitle'),
       durationSec: asset.duration ? Math.round(asset.duration / 1000) : 0,
       uri: asset.uri,
     });
@@ -175,7 +178,7 @@ export default function EventoDetailScreen() {
                     <View className="flex-1">
                       <Text className="font-heading text-sm text-text">{p.name}</Text>
                       <Text className="font-body text-2xs text-neutral-500">
-                        {p.style ? `${p.style} · ` : ''}
+                        {p.style ? `${t(`danceStyles.${p.style}`)} · ` : ''}
                         {t('events.videosCount', { n: p.videos.length })}
                       </Text>
                     </View>

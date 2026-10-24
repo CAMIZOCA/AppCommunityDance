@@ -76,7 +76,7 @@ export default function GalleryScreen() {
                 className="mb-2 rounded-2xl"
                 style={{ aspectRatio: 4 / 5 }}
                 showPlay
-                label={`video · ${fmtDuration(item.durationSec)}`}
+                label={t('gallery.videoDuration', { dur: fmtDuration(item.durationSec) })}
               />
               {role === 'alumno' && learned ? (
                 <View className="absolute left-2 top-2 flex-row items-center gap-1 rounded-full bg-accentScale-900 px-2 py-1">

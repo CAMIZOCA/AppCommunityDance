@@ -3,6 +3,8 @@ export type Level = 'principiante' | 'intermedio' | 'avanzado' | 'profesional';
 export interface Person {
   id: string;
   name: string;
+  /** Nombre corto para saludos (si falta, se usa name). */
+  shortName?: string;
   level: Level;
 }
 
@@ -10,8 +12,8 @@ export const TEACHER_ID = 'profe-daniela';
 export const CURRENT_STUDENT_ID = 'sofia';
 
 export const PEOPLE: Person[] = [
-  { id: TEACHER_ID, name: 'Profe Daniela', level: 'profesional' },
-  { id: CURRENT_STUDENT_ID, name: 'Sofía Ramírez', level: 'intermedio' },
+  { id: TEACHER_ID, name: 'Profe Daniela', shortName: 'Profe Daniela', level: 'profesional' },
+  { id: CURRENT_STUDENT_ID, name: 'Sofía Ramírez', shortName: 'Sofía', level: 'intermedio' },
   { id: 'mateo', name: 'Mateo López', level: 'intermedio' },
   { id: 'valentina', name: 'Valentina Cruz', level: 'intermedio' },
   { id: 'camila', name: 'Camila Torres', level: 'intermedio' },

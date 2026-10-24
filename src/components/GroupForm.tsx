@@ -5,7 +5,7 @@ import { useThemeColors } from '@/theme/useThemeColors';
 import { useT } from '@/i18n';
 import { useAppStore } from '@/store/useAppStore';
 import { useUiStore } from '@/store/useUiStore';
-import { PEOPLE, initialsOf } from '@/data/people';
+import { PEOPLE, TEACHER_ID, initialsOf } from '@/data/people';
 import { LEVELS, STYLES, type Style } from '@/data/catalog';
 import type { Level } from '@/data/people';
 import { Avatar } from './Avatar';
@@ -37,7 +37,7 @@ export function GroupForm({ groupId }: Props) {
 
   const students = useMemo(() => {
     const filtered = PEOPLE.filter(
-      p => p.id !== 'profe-daniela' && p.name.toLowerCase().includes(studentQuery.toLowerCase())
+      p => p.id !== TEACHER_ID && p.name.toLowerCase().includes(studentQuery.toLowerCase())
     );
     return [...filtered].sort((a, b) => {
       const aMatch = a.level === level ? 0 : 1;

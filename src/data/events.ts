@@ -6,11 +6,30 @@ export interface VideoAsset {
   uri?: string;
 }
 
+/** Claves de estilo de baile; el texto se traduce en i18n (danceStyles.*). */
+export type DanceStyleKey = 'kpop' | 'tropical' | 'bachata';
+
+/**
+ * Horario por defecto de las presentaciones de un evento nuevo.
+ * Primera presentación a las 17:00 y luego una cada 15 minutos. Es un valor
+ * fijo a propósito (el profe puede cambiarlo luego); ajustar aquí si cambia.
+ */
+export const EVENT_FIRST_SLOT = { hour: 17, minute: 0 } as const;
+export const EVENT_SLOT_MINUTES = 15;
+
+/** Hora "HH:MM" de la presentación número `index` (0-based). */
+export function slotTime(index: number): string {
+  const total = EVENT_FIRST_SLOT.hour * 60 + EVENT_FIRST_SLOT.minute + index * EVENT_SLOT_MINUTES;
+  const hour = Math.floor(total / 60) % 24;
+  const minute = total % 60;
+  return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+}
+
 export interface Presentation {
   id: string;
   time: string;
   name: string;
-  style?: string;
+  style?: DanceStyleKey;
   videos: VideoAsset[];
 }
 
@@ -25,7 +44,8 @@ export interface EventItem {
   name: string;
   venue: string;
   day: string;
-  month: string;
+  /** Mes 0-11 (se muestra en el idioma activo con monthsShort); null si no se pudo leer la fecha. */
+  month: number | null;
   dateLabel: string;
   isPast: boolean;
   presentations: Presentation[];
@@ -48,13 +68,13 @@ export const SEED_EVENTS: EventItem[] = [
     name: 'Show MyMambo · Ventura Mall',
     venue: 'Ventura Mall · Plaza central',
     day: '19',
-    month: 'SEP',
+    month: 8,
     dateLabel: 'Sáb 19 sep · 17:00',
     isPast: true,
     presentations: [
-      { id: 'p1', time: '17:00', name: 'Kids MyMambo', style: 'K-pop', videos: [video('Coreografía completa', 192), video('Toma lateral', 185)] },
-      { id: 'p2', time: '17:15', name: 'Kids MyMambo', style: 'Tropical', videos: [video('Coreografía completa', 160)] },
-      { id: 'p3', time: '17:30', name: 'Bachata Lady', style: 'Bachata', videos: [video('Coreografía completa', 200)] },
+      { id: 'p1', time: '17:00', name: 'Kids MyMambo', style: 'kpop', videos: [video('Coreografía completa', 192), video('Toma lateral', 185)] },
+      { id: 'p2', time: '17:15', name: 'Kids MyMambo', style: 'tropical', videos: [video('Coreografía completa', 160)] },
+      { id: 'p3', time: '17:30', name: 'Bachata Lady', style: 'bachata', videos: [video('Coreografía completa', 200)] },
       { id: 'p4', time: '17:45', name: 'Tropical Principiante', videos: [video('Coreografía completa', 175)] },
       { id: 'p5', time: '18:00', name: 'Salsa Intermedio', videos: [video('Coreografía completa', 210)] },
       { id: 'p6', time: '18:15', name: 'Bachata Intermedio', videos: [video('Coreografía completa', 190)] },
@@ -73,11 +93,11 @@ export const SEED_EVENTS: EventItem[] = [
     name: 'Presentación mensual · Sala MyMambo',
     venue: 'Sala MyMambo',
     day: '24',
-    month: 'OCT',
+    month: 9,
     dateLabel: 'Sáb 24 oct · 18:00',
     isPast: false,
     presentations: [
-      { id: 'p1', time: '18:00', name: 'Kids MyMambo', style: 'K-pop', videos: [] },
+      { id: 'p1', time: '18:00', name: 'Kids MyMambo', style: 'kpop', videos: [] },
       { id: 'p2', time: '18:15', name: 'Salsa Principiante', videos: [] },
       { id: 'p3', time: '18:30', name: 'Bachata Intermedio', videos: [] },
       { id: 'p4', time: '18:45', name: 'Tropical Principiante', videos: [] },
@@ -90,7 +110,7 @@ export const SEED_EVENTS: EventItem[] = [
     name: 'Noche de Elenco',
     venue: 'Teatro Municipal',
     day: '28',
-    month: 'AGO',
+    month: 7,
     dateLabel: 'Vie 28 ago · 20:00',
     isPast: true,
     presentations: [
